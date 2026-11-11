@@ -6,7 +6,7 @@ O LPData é uma aplicação exclusivamente API e não tem frontend próprio. Est
 
 ## Estado
 
-Em especificação. As decisões estruturais estão registradas em [docs/adr/](docs/adr/) e a sequência de desenvolvimento está dividida nas issues deste repositório.
+Em desenvolvimento. A fundação (#10) está pronta: projeto, casca, identidade visual e pilha de testes, sem nenhuma tela de produto. As decisões estruturais estão registradas em [docs/adr/](docs/adr/) e a sequência de desenvolvimento está dividida nas issues deste repositório, com a ordem na #18.
 
 ## Stack
 
@@ -28,4 +28,31 @@ O dashboard precisa saber onde a API está:
 VITE_LPDATA_API_URL=https://api.lpdata.io
 ```
 
-Em desenvolvimento, aponte para a instância local do LPData e inclua a origem do dashboard em `LPDATA_CORS_ORIGINS`, do lado da API.
+Em desenvolvimento, aponte para a instância local do LPData e inclua a origem do dashboard em `LPDATA_CORS_ORIGINS`, do lado da API. Sem a variável, o dashboard usa `https://api.lpdata.io`, que é a API de produção, e avisa no console.
+
+Copie o exemplo para começar:
+
+```sh
+cp .env.example .env
+```
+
+A origem padrão do Vite é `http://localhost:5173`. Se essa porta estiver ocupada, o Vite sobe em outra, e a API recusa a origem nova.
+
+## Desenvolvimento
+
+```sh
+npm install
+npm run dev          # servidor local
+npm run build        # build estático em dist/
+npm test             # testes, uma vez
+npm run test:watch   # testes em modo observação
+npm run lint         # ESLint
+npm run typecheck    # TypeScript
+npm run format       # Prettier
+```
+
+Não há integração contínua: rode `npm test`, `npm run lint` e `npm run typecheck` antes de commitar.
+
+## Identidade visual
+
+O dashboard é a extensão da [documentação da API](https://lpdata.io) e copia o visual dela: a paleta monocromática loblolly, a fonte Inter, os breakpoints e os dois temas. Os tokens ficam em `src/styles/utils/variables.scss`. A documentação usa a fonte monoespaçada Paper Mono, que é do Mintlify e não é redistribuível, então o dashboard usa a cadeia de reserva que a própria documentação declara.

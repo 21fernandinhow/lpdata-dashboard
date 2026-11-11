@@ -1,0 +1,19 @@
+.loader {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  padding: calc(var(--spacing) * 12);
+}
+
+.loader__spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 2s;
+  }
+}

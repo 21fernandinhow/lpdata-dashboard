@@ -1,0 +1,36 @@
+@use "../utils/responsivity" as *;
+
+// Páginas sem conteúdo de produto ainda: o placeholder do login e o 404.
+.status-page {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  padding: calc(var(--spacing) * 12) calc(var(--spacing) * 4);
+}
+
+.status-page__box {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 3);
+  width: 100%;
+  max-width: 28rem;
+  text-align: center;
+}
+
+.status-page__eyebrow {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.status-page__title {
+  font-size: var(--text-2xl);
+
+  @include from("sm") {
+    font-size: var(--text-3xl);
+  }
+}
+
+.status-page__text {
+  color: var(--color-muted);
+}

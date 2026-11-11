@@ -1,0 +1,26 @@
+# Dependências
+node_modules
+
+# Build
+dist
+dist-ssr
+coverage
+*.tsbuildinfo
+
+# Ambiente: só o exemplo é versionado
+.env
+.env.*
+!.env.example
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Editor e sistema
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.local
+.vercel
