@@ -1,29 +1,59 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-export type Theme = "light" | "dark"
+export type ThemePreference = "system" | "light" | "dark"
+type Theme = "light" | "dark"
 
 // A mesma chave que o script do index.html lê antes da primeira pintura.
+// Sem valor salvo, a preferência é "system".
 const STORAGE_KEY = "lpdata-theme"
+const DARK_QUERY = "(prefers-color-scheme: dark)"
 
-function currentTheme(): Theme {
-  return document.documentElement.dataset.theme === "dark" ? "dark" : "light"
+function readPreference(): ThemePreference {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored === "light" || stored === "dark") return stored
+  } catch {
+    // Sem armazenamento disponível, vale o sistema.
+  }
+  return "system"
 }
 
-// O tema inicial vem do script do index.html: a preferência salva ou, sem ela, a do sistema.
-// Só a escolha explícita do usuário é salva, para que quem nunca escolheu continue seguindo o sistema.
-export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(currentTheme)
+function applyTheme(preference: ThemePreference) {
+  const theme: Theme =
+    preference === "system"
+      ? window.matchMedia(DARK_QUERY).matches
+        ? "dark"
+        : "light"
+      : preference
+  document.documentElement.dataset.theme = theme
+}
 
-  function toggleTheme() {
-    const next: Theme = theme === "dark" ? "light" : "dark"
-    document.documentElement.dataset.theme = next
-    try {
-      localStorage.setItem(STORAGE_KEY, next)
-    } catch {
-      // Sem armazenamento disponível, o tema vale só até recarregar a página.
-    }
-    setTheme(next)
+function savePreference(preference: ThemePreference) {
+  try {
+    if (preference === "system") localStorage.removeItem(STORAGE_KEY)
+    else localStorage.setItem(STORAGE_KEY, preference)
+  } catch {
+    // Sem armazenamento disponível, a escolha vale só até recarregar a página.
+  }
+}
+
+export function useThemePreference() {
+  const [preference, setPreferenceState] = useState<ThemePreference>(readPreference)
+
+  // Em "system", o tema acompanha a mudança do sistema com a página aberta.
+  useEffect(() => {
+    if (preference !== "system") return
+    const query = window.matchMedia(DARK_QUERY)
+    const follow = () => applyTheme("system")
+    query.addEventListener("change", follow)
+    return () => query.removeEventListener("change", follow)
+  }, [preference])
+
+  function setPreference(next: ThemePreference) {
+    applyTheme(next)
+    savePreference(next)
+    setPreferenceState(next)
   }
 
-  return { theme, toggleTheme }
+  return { preference, setPreference }
 }

@@ -27,7 +27,7 @@ describe("pilha de testes", () => {
     expect(
       await screen.findByRole("heading", { name: "Página não encontrada" }),
     ).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: /usar tema/i })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Mudar o tema" })).toBeInTheDocument()
   })
 
   it("intercepta uma requisição com MSW", async () => {

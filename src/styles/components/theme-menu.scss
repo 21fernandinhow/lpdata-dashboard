@@ -1,0 +1,76 @@
+// Medido no seletor de tema da documentação publicada.
+
+.theme-menu__trigger {
+  anchor-name: --theme-menu;
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: calc(var(--spacing) * 2);
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: none;
+  color: var(--color-icon);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-icon-hover);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.theme-menu__list {
+  position-anchor: --theme-menu;
+  position-area: block-end span-inline-start;
+  inset: auto;
+  min-width: 8rem;
+  margin: calc(var(--spacing) * 1) 0 0;
+  padding: calc(var(--spacing) * 1);
+  border: 1px solid var(--color-menu-border);
+  border-radius: 1rem;
+  background-color: var(--color-menu-bg);
+  box-shadow:
+    0 20px 25px -5px rgb(135 150 170 / 5%),
+    0 8px 10px -6px rgb(135 150 170 / 5%);
+}
+
+.theme-menu__item {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  width: 100%;
+  height: 2.25rem;
+  padding: calc(var(--spacing) * 2);
+  border: 0;
+  border-radius: var(--radius-xl);
+  background: none;
+  color: var(--color-menu-item);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+
+  &[aria-pressed="true"] {
+    color: var(--color-accent);
+  }
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-menu-item-hover-bg);
+    color: var(--color-menu-item-hover);
+  }
+
+  svg {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.theme-menu__check {
+  margin-left: auto;
+}

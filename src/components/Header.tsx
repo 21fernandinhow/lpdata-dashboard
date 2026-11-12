@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { ThemeToggle } from "@/components/ThemeToggle"
+import { ThemeMenu } from "@/components/ThemeMenu"
 
 export function Header() {
   return (
@@ -22,7 +22,7 @@ export function Header() {
           />
           <span className="header__product">Dashboard</span>
         </Link>
-        <ThemeToggle />
+        <ThemeMenu />
       </div>
     </header>
   )
