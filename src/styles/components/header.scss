@@ -33,6 +33,12 @@
   text-decoration: none;
 }
 
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 1);
+}
+
 .header__logo {
   height: 1.75rem;
   width: auto;

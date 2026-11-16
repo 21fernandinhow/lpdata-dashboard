@@ -6,7 +6,9 @@
 @use "components/app-shell";
 @use "components/header";
 @use "components/theme-menu";
+@use "components/account-menu";
 @use "components/loader";
 @use "components/error-state";
 
 @use "pages/status-page";
+@use "pages/auth-page";

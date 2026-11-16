@@ -25,6 +25,23 @@ if (!window.matchMedia) {
     }) as MediaQueryList
 }
 
+// jsdom não implementa a Web Locks API. A sessão usa navigator.locks para renovar uma vez
+// por vez entre abas. Esta correção cobre só a forma usada: request(nome, callback), em fila.
+if (!("locks" in navigator)) {
+  const queues = new Map<string, Promise<unknown>>()
+
+  Object.defineProperty(navigator, "locks", {
+    value: {
+      request(name: string, callback: () => Promise<unknown>) {
+        const previous = queues.get(name) ?? Promise.resolve()
+        const result = previous.catch(() => {}).then(() => callback())
+        queues.set(name, result)
+        return result
+      },
+    },
+  })
+}
+
 // jsdom não implementa a Popover API, mas esconde todo [popover]. A interface usa popover
 // nativo (ADR 0007). Esta correção abre e fecha o popover e trata os botões com popovertarget.
 if (!("showPopover" in HTMLElement.prototype)) {

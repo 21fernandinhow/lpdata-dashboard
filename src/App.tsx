@@ -1,13 +1,17 @@
 import { BrowserRouter } from "react-router-dom"
 import { AppRoutes } from "@/AppRoutes"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { SessionProvider } from "@/session/SessionProvider"
+import type { Session } from "@/session/session"
 
-export function App() {
+export function App({ session }: { session: Session }) {
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <SessionProvider session={session}>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </SessionProvider>
     </ErrorBoundary>
   )
 }

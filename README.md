@@ -6,11 +6,11 @@ O LPData é uma aplicação exclusivamente API e não tem frontend próprio. Est
 
 ## Estado
 
-Em desenvolvimento. A fundação (#10) está pronta: projeto, casca, identidade visual e pilha de testes, sem nenhuma tela de produto. As decisões estruturais estão registradas em [docs/adr/](docs/adr/) e a sequência de desenvolvimento está dividida nas issues deste repositório, com a ordem na #18.
+Em desenvolvimento. A fundação (#10) e a sessão (#11) estão prontas: cadastro, login, logout e renovação automática da sessão. As landing pages chegam na #12. As decisões estruturais estão registradas em [docs/adr/](docs/adr/) e a sequência de desenvolvimento está dividida nas issues deste repositório, com a ordem na #18.
 
 ## Stack
 
-Vite, React e TypeScript, SCSS próprio sobre elementos nativos do HTML, publicado como build estático na Vercel. Sem servidor próprio: o navegador fala diretamente com `api.lpdata.io`.
+Vite, React e TypeScript, SCSS próprio sobre elementos nativos do HTML, publicado como build estático na Vercel. Sem servidor próprio: o navegador fala diretamente com `api.lpdata.io`, pelo axios, fixado em versão exata ([ADR 0008](docs/adr/0008-axios-com-versao-exata.md)).
 
 As razões de cada escolha estão nos ADRs, em especial a [0001](docs/adr/0001-spa-em-vite-e-react-sem-servidor-proprio.md) e a [0007](docs/adr/0007-interface-artesanal-sobre-elementos-nativos.md).
 
@@ -28,15 +28,17 @@ O dashboard precisa saber onde a API está:
 VITE_LPDATA_API_URL=https://api.lpdata.io
 ```
 
-Em desenvolvimento, aponte para a instância local do LPData e inclua a origem do dashboard em `LPDATA_CORS_ORIGINS`, do lado da API. Sem a variável, o dashboard usa `https://api.lpdata.io`, que é a API de produção, e avisa no console.
+Sem a variável, o dashboard usa `https://api.lpdata.io`, que é a API de produção.
+
+Em desenvolvimento, o cliente não chama a API direto: ele chama `/api`, e o proxy do Vite repassa para `VITE_LPDATA_API_URL`. O navegador vê tudo na mesma origem, então a API não precisa aceitar `localhost` em `LPDATA_CORS_ORIGINS`, e qualquer porta do Vite funciona. Sem a variável, o proxy aponta para a produção e avisa no terminal.
+
+Em produção, o build chama `VITE_LPDATA_API_URL` direto, e a API precisa aceitar a origem do dashboard no CORS.
 
 Copie o exemplo para começar:
 
 ```sh
 cp .env.example .env
 ```
-
-A origem padrão do Vite é `http://localhost:5173`. Se essa porta estiver ocupada, o Vite sobe em outra, e a API recusa a origem nova.
 
 ## Desenvolvimento
 

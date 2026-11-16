@@ -1,4 +1,5 @@
-import type { ComponentType, ReactNode } from "react"
+import type { ComponentType } from "react"
+import { Icon } from "@/components/Icon"
 import { useThemePreference, type ThemePreference } from "@/theme"
 
 // Cópia do seletor de tema da documentação: os mesmos rótulos, ícones e opções.
@@ -46,23 +47,7 @@ export function ThemeMenu() {
   )
 }
 
-// Ícones copiados da documentação (Mintlify), em viewBox 18 e traço 1,5.
-function Icon({ children }: { children: ReactNode }) {
-  return (
-    <svg
-      viewBox="0 0 18 18"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      {children}
-    </svg>
-  )
-}
-
+// Ícones copiados da documentação (Mintlify).
 function SystemIcon() {
   return (
     <Icon>

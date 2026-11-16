@@ -1,0 +1,62 @@
+// Menus do cabeçalho, medidos no seletor de tema da documentação publicada.
+// O nome da âncora liga o botão ao popover (CSS Anchor Positioning, ADR 0007).
+
+@mixin trigger($anchor) {
+  anchor-name: $anchor;
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: calc(var(--spacing) * 2);
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: none;
+  color: var(--color-icon);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-icon-hover);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+@mixin panel($anchor) {
+  position-anchor: $anchor;
+  position-area: block-end span-inline-start;
+  inset: auto;
+  margin: calc(var(--spacing) * 1) 0 0;
+  padding: calc(var(--spacing) * 1);
+  border: 1px solid var(--color-menu-border);
+  border-radius: 1rem;
+  background-color: var(--color-menu-bg);
+  box-shadow:
+    0 20px 25px -5px rgb(135 150 170 / 5%),
+    0 8px 10px -6px rgb(135 150 170 / 5%);
+}
+
+@mixin item {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  width: 100%;
+  height: 2.25rem;
+  padding: calc(var(--spacing) * 2);
+  border: 0;
+  border-radius: var(--radius-xl);
+  background: none;
+  color: var(--color-menu-item);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-menu-item-hover-bg);
+    color: var(--color-menu-item-hover);
+  }
+}
