@@ -1,0 +1,46 @@
+@use "../utils/responsivity" as *;
+
+// Uma landing page aberta. O conteúdo chega com o Modo Raw (#14).
+
+.landing-page {
+  width: 100%;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 4);
+}
+
+.landing-page__breadcrumb {
+  margin-bottom: calc(var(--spacing) * 3);
+  font-size: var(--text-sm);
+}
+
+.landing-page__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 4);
+  margin-bottom: calc(var(--spacing) * 6);
+}
+
+.landing-page__title {
+  font-size: var(--text-2xl);
+  overflow-wrap: anywhere;
+
+  @include from("sm") {
+    font-size: var(--text-3xl);
+  }
+}
+
+.landing-page__actions {
+  display: flex;
+  gap: calc(var(--spacing) * 2);
+}
+
+.landing-page__placeholder {
+  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 4);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  color: var(--color-muted);
+  text-align: center;
+}

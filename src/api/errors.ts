@@ -31,6 +31,10 @@ export function userMessage(error: unknown, situation: ErrorSituation = "default
   return MESSAGES.unexpected
 }
 
+export function isNotFound(error: unknown): boolean {
+  return isAxiosError(error) && error.response?.status === 404
+}
+
 // A API responde erros em dois envelopes: { errors: [...] } na validação (422) e nos 401 dos
 // controllers de auth, e { error: "..." } no 401 de Bearer ausente ou vencido, no 404 e no 429.
 export function apiErrorDetails(error: unknown): string[] {

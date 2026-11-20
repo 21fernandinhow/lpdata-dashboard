@@ -1,6 +1,6 @@
 // Imitação da API do LPData para os testes, no nível da rede (MSW).
 // Reproduz o que muda o comportamento do cliente: rotação do refresh token, 401 no reuso,
-// os dois envelopes de erro e o 302 para quem não pede JSON.
+// os dois envelopes de erro, o 302 para quem não pede JSON e o 404 da landing page de outra conta.
 import { http, HttpResponse } from "msw/http"
 import { setupServer } from "msw/node"
 import { env } from "@/env"
@@ -8,8 +8,23 @@ import { env } from "@/env"
 type User = { id: number; email: string; password: string }
 type LoggedRequest = { method: string; path: string; headers: Headers; body: unknown }
 
+// O registro como a API o serializa: todas as colunas da tabela landing_pages.
+type LandingPageRecord = {
+  id: number
+  public_id: number
+  name: string
+  current_data: unknown
+  allowed_hosts: string[]
+  user_id: number
+  created_at: string
+  updated_at: string
+}
+
+type LandingPageParams = { name?: string; current_data?: unknown; allowed_hosts?: string[] }
+
 const WARDEN_401 = { error: "You need to sign in or sign up before continuing." }
 const INVALID_REFRESH = { errors: ["Invalid or expired refresh token"] }
+const LANDING_PAGE_404 = { error: "Landing page not found" }
 
 export const url = (path: string) => `${env.apiBaseUrl}${path}`
 
@@ -33,6 +48,8 @@ function createFakeApi() {
   let refreshGate: Promise<void> | null = null
   let sequence = 0
   let log: LoggedRequest[] = []
+  let landingPages: LandingPageRecord[] = []
+  let landingPageSequence = 0
 
   function issueTokens(user: User) {
     sequence += 1
@@ -71,6 +88,39 @@ function createFakeApi() {
   }
 
   const redirect = () => empty(302, { Location: "/" })
+
+  // As validações do modelo LandingPage, com as mensagens de full_messages do Rails. O contrato
+  // do Documento de Conteúdo não é imitado: aqui só o documento nulo é recusado.
+  function landingPageErrors(record: LandingPageRecord) {
+    const errors: string[] = []
+    if (!record.name?.trim()) errors.push("Name can't be blank")
+    if (record.current_data == null) errors.push("Current data can't be blank")
+    return errors
+  }
+
+  // Busca só entre as landing pages do usuário: a de outra conta é 404, como na API.
+  function ownLandingPage(request: Request, id: unknown) {
+    const user = bearerUser(request)
+    if (!user) return { response: json(WARDEN_401, 401) }
+    const found = landingPages.find((page) => page.id === Number(id) && page.user_id === user.id)
+    if (!found) return { response: json(LANDING_PAGE_404, 404) }
+    return { found }
+  }
+
+  function buildLandingPage(userId: number, params: LandingPageParams): LandingPageRecord {
+    landingPageSequence += 1
+    const now = new Date().toISOString()
+    return {
+      id: landingPageSequence,
+      public_id: 3400 + landingPageSequence,
+      name: params.name ?? "",
+      current_data: params.current_data ?? null,
+      allowed_hosts: params.allowed_hosts ?? [],
+      user_id: userId,
+      created_at: now,
+      updated_at: now,
+    }
+  }
 
   const handlers = [
     // Preflight do CORS: só Authorization e Content-Type passam. Um cabeçalho próprio é recusado,
@@ -137,6 +187,48 @@ function createFakeApi() {
       if (token) accessTokens.delete(token)
       return empty(204)
     }),
+
+    http.get(url("/manage/landing_pages"), ({ request }) => {
+      const user = bearerUser(request)
+      if (!user) return json(WARDEN_401, 401)
+      return json({ landing_pages: landingPages.filter((page) => page.user_id === user.id) })
+    }),
+
+    http.post(url("/manage/landing_pages"), async ({ request }) => {
+      const user = bearerUser(request)
+      if (!user) return json(WARDEN_401, 401)
+      const { landing_page } = (await request.json()) as { landing_page: LandingPageParams }
+      const record = buildLandingPage(user.id, landing_page)
+      const errors = landingPageErrors(record)
+      if (errors.length) return json({ errors }, 422)
+      landingPages.push(record)
+      return json({ landing_page: record }, 201)
+    }),
+
+    http.get(url("/manage/landing_pages/:id"), ({ request, params }) => {
+      const { found, response } = ownLandingPage(request, params.id)
+      if (!found) return response
+      return json({ landing_page: found })
+    }),
+
+    // Atualização parcial: só as chaves enviadas mudam.
+    http.patch(url("/manage/landing_pages/:id"), async ({ request, params }) => {
+      const { found, response } = ownLandingPage(request, params.id)
+      if (!found) return response
+      const { landing_page } = (await request.json()) as { landing_page: LandingPageParams }
+      const updated = { ...found, ...landing_page, updated_at: new Date().toISOString() }
+      const errors = landingPageErrors(updated)
+      if (errors.length) return json({ errors }, 422)
+      landingPages = landingPages.map((page) => (page.id === found.id ? updated : page))
+      return json({ landing_page: updated })
+    }),
+
+    http.delete(url("/manage/landing_pages/:id"), ({ request, params }) => {
+      const { found, response } = ownLandingPage(request, params.id)
+      if (!found) return response
+      landingPages = landingPages.filter((page) => page.id !== found.id)
+      return empty(204)
+    }),
   ]
 
   return {
@@ -151,6 +243,22 @@ function createFakeApi() {
       refreshGate = null
       sequence = 0
       log = []
+      landingPages = []
+      landingPageSequence = 0
+    },
+
+    // Cria uma landing page para o usuário, como uma criação anterior.
+    createLandingPage(email: string, name: string, currentData: unknown = {}) {
+      const user = users.find((existing) => existing.email === email)
+      if (!user) throw new Error(`Usuário inexistente: ${email}`)
+      const record = buildLandingPage(user.id, { name, current_data: currentData })
+      landingPages.push(record)
+      return record
+    },
+
+    // As landing pages gravadas, de todas as contas.
+    landingPages() {
+      return landingPages
     },
 
     createUser(email: string, password: string) {

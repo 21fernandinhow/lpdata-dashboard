@@ -1,5 +1,5 @@
 import { AxiosError, AxiosHeaders } from "axios"
-import { apiErrorDetails, userMessage } from "@/api/errors"
+import { apiErrorDetails, isNotFound, userMessage } from "@/api/errors"
 
 function responseError(status: number, data: unknown = {}) {
   const config = { headers: new AxiosHeaders() }
@@ -74,5 +74,14 @@ describe("apiErrorDetails", () => {
   it("sem corpo de erro da API, não há detalhes", () => {
     expect(apiErrorDetails(networkError())).toEqual([])
     expect(apiErrorDetails(responseError(500, "<html>"))).toEqual([])
+  })
+})
+
+describe("isNotFound", () => {
+  it("só o 404 da API é não encontrado", () => {
+    expect(isNotFound(responseError(404, { error: "Landing page not found" }))).toBe(true)
+    expect(isNotFound(responseError(422))).toBe(false)
+    expect(isNotFound(networkError())).toBe(false)
+    expect(isNotFound(new Error("boom"))).toBe(false)
   })
 })
