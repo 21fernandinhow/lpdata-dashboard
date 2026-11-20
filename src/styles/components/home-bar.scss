@@ -32,8 +32,3 @@
   gap: calc(var(--spacing) * 3);
   margin-bottom: calc(var(--spacing) * 4);
 }
-
-// O botão ghost alinha o ícone com a borda do conteúdo, como o Voltar da landing page.
-.home-actions > .button--ghost:first-child {
-  margin-inline-start: calc(var(--spacing) * -4);
-}
