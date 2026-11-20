@@ -25,7 +25,7 @@ async function openForm(document: unknown = DOCUMENT) {
   fakeApi.createUser(EMAIL, "senha-secreta")
   localStorage.setItem(REFRESH_TOKEN_KEY, fakeApi.openSession(EMAIL))
   const page = fakeApi.createLandingPage(EMAIL, "Lançamento", document)
-  renderApp(`/landing-pages/${page.id}?modo=formulario`)
+  renderApp(`/landing-pages/${page.id}`)
   await screen.findByRole("link", { name: "Formulário" })
   return page
 }

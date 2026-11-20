@@ -30,7 +30,6 @@ type ContentProps = {
 // O modo fica no endereço. Na interface, o Modo Raw se chama JSON.
 const MODE_PARAM = "modo"
 const RAW_MODE = "json"
-const FORM_MODE = "formulario"
 
 // A seção da documentação do Dashboard que explica cada modo.
 const MODE_DOCS = {
@@ -45,11 +44,8 @@ const SHORTCUT = /Mac|iPhone|iPad/.test(navigator.userAgent) ? "⌘S" : "Ctrl+S"
 export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved }: ContentProps) {
   const api = useApi()
   const [searchParams] = useSearchParams()
-  // Sem modo no endereço, abre no Formulário, que é o modo de quem não lê JSON. Documento vazio
-  // abre no JSON: não há campo para editar, e a estrutura só se cria lá. A escolha é feita ao abrir
-  // e não muda enquanto se edita, para o modo não trocar sozinho no meio da digitação.
-  const [defaultMode] = useState(() => (isEmptyDocument(page.current_data) ? RAW_MODE : FORM_MODE))
-  const onRaw = (searchParams.get(MODE_PARAM) ?? defaultMode) === RAW_MODE
+  // Sem modo no endereço, abre no Formulário, que é o modo de quem não lê JSON.
+  const onRaw = searchParams.get(MODE_PARAM) === RAW_MODE
   const editorRef = useRef<JsonEditorHandle>(null)
   const formRef = useRef<ContentFormHandle>(null)
   const problemId = useId()
@@ -129,7 +125,7 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
       <div className="content__toolbar">
         <nav className="segmented" aria-label="Modo de edição">
           <Link
-            to={{ search: `?${MODE_PARAM}=${FORM_MODE}` }}
+            to={{ search: "" }}
             className="segmented__option"
             aria-current={onRaw ? undefined : "page"}
           >
@@ -243,9 +239,4 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
       <DocsLink href={docs.href}>{docs.label}</DocsLink>
     </div>
   )
-}
-
-function isEmptyDocument(document: unknown) {
-  if (Array.isArray(document)) return document.length === 0
-  return typeof document === "object" && document !== null && Object.keys(document).length === 0
 }

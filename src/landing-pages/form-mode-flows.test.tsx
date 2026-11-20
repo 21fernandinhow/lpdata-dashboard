@@ -68,16 +68,13 @@ describe("Modo Formulário", () => {
     expect(section("Item 1", section("features"))).not.toHaveAttribute("open")
   })
 
-  it("documento vazio abre no JSON", async () => {
+  it("documento vazio também abre no Formulário, com os botões de criar", async () => {
     await openForm({})
 
-    expect(screen.getByRole("link", { name: "JSON" })).toHaveAttribute("aria-current", "page")
-    expect(await screen.findByLabelText("Documento de Conteúdo")).toHaveValue("{}")
-
-    await userEvent.click(screen.getByRole("link", { name: "Formulário" }))
-
-    expect(window.location.search).toBe("?modo=formulario")
+    expect(screen.getByRole("link", { name: "Formulário" })).toHaveAttribute("aria-current", "page")
     expect(screen.getByText(/O documento está vazio/)).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Adicionar campo" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Adicionar seção" })).toBeInTheDocument()
   })
 
   it("abaixo do formulário, um link leva à seção do formulário na documentação", async () => {
