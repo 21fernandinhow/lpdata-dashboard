@@ -160,7 +160,7 @@ describe("renomear", () => {
       hero: { title: { value: "Olá", type: "string" } },
     })
 
-    await userEvent.click(screen.getByRole("link", { name: "Landing pages" }))
+    await userEvent.click(screen.getByRole("link", { name: "Voltar" }))
 
     expect(await screen.findByRole("link", { name: "Lançamento de verão" })).toBeInTheDocument()
     // A mesma sessão em memória: a navegação não recarregou a página.

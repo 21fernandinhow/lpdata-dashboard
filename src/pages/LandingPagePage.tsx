@@ -10,6 +10,7 @@ import {
 import { useLoad } from "@/api/use-load"
 import { ErrorState } from "@/components/ErrorState"
 import { FormDialog } from "@/components/FormDialog"
+import { Icon } from "@/components/Icon"
 import { Loader } from "@/components/Loader"
 import { useApi } from "@/session/context"
 
@@ -69,10 +70,6 @@ function LandingPageView({ page, onRenamed }: LandingPageViewProps) {
 
   return (
     <section className="landing-page">
-      <nav className="landing-page__breadcrumb" aria-label="Navegação">
-        <Link to="/">Landing pages</Link>
-      </nav>
-
       <header className="landing-page__header">
         <h1 className="landing-page__title">{page.name}</h1>
         <div className="landing-page__actions">
@@ -94,6 +91,18 @@ function LandingPageView({ page, onRenamed }: LandingPageViewProps) {
       </header>
 
       <p className="landing-page__placeholder">A edição do Documento de Conteúdo chega na #14.</p>
+
+      {/* Link para a lista, não history.back(): quem abriu a landing page pelo endereço sairia
+          do dashboard. */}
+      <footer className="landing-page__footer">
+        <Link to="/" className="button button--secondary">
+          <Icon>
+            <path d="M14.25 9H3.75" />
+            <path d="M8 4.75L3.75 9L8 13.25" />
+          </Icon>
+          Voltar
+        </Link>
+      </footer>
 
       <FormDialog
         ref={renameDialog}
