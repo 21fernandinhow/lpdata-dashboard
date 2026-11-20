@@ -50,7 +50,7 @@ describe("lista de landing pages", () => {
     openSignedIn()
 
     expect(await screen.findByText("Você ainda não tem landing pages.")).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Nova landing page" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Nova página" })).toBeInTheDocument()
   })
 
   it("erro ao listar mostra a mensagem e tenta de novo", async () => {
@@ -73,7 +73,7 @@ describe("criar", () => {
   it("envia o nome com o documento vazio e leva à landing page criada", async () => {
     openSignedIn()
 
-    const dialog = await openDialog("Nova landing page", "Nova landing page")
+    const dialog = await openDialog("Nova página", "Nova página")
     await userEvent.type(within(dialog).getByLabelText("Nome"), "Lançamento")
     await userEvent.click(within(dialog).getByRole("button", { name: "Criar" }))
 
@@ -88,7 +88,7 @@ describe("criar", () => {
   it("nome recusado pela API mostra o erro no dialog, sem criar", async () => {
     openSignedIn()
 
-    const dialog = await openDialog("Nova landing page", "Nova landing page")
+    const dialog = await openDialog("Nova página", "Nova página")
     await userEvent.type(within(dialog).getByLabelText("Nome"), "   ")
     await userEvent.click(within(dialog).getByRole("button", { name: "Criar" }))
 
@@ -103,7 +103,7 @@ describe("criar", () => {
   it("cancelar fecha o dialog sem chamar a API", async () => {
     openSignedIn()
 
-    const dialog = await openDialog("Nova landing page", "Nova landing page")
+    const dialog = await openDialog("Nova página", "Nova página")
     await userEvent.type(within(dialog).getByLabelText("Nome"), "Lançamento")
     await userEvent.click(within(dialog).getByRole("button", { name: "Cancelar" }))
 

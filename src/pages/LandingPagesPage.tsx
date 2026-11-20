@@ -8,7 +8,6 @@ import { FormDialog } from "@/components/FormDialog"
 import { HomeTabs } from "@/components/HomeTabs"
 import { Icon } from "@/components/Icon"
 import { Loader } from "@/components/Loader"
-import { Tooltip } from "@/components/Tooltip"
 import { useApi } from "@/session/context"
 
 const updatedAt = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" })
@@ -48,22 +47,21 @@ export default function LandingPagesPage() {
       <header className="home-bar">
         <h2 className="visually-hidden">Páginas</h2>
         <HomeTabs current="landing-pages" />
-        <Tooltip label="Nova landing page">
-          {(tooltipId) => (
-            <button
-              type="button"
-              className="button button--ghost button--icon"
-              aria-labelledby={tooltipId}
-              onClick={() => createDialog.current?.showModal()}
-            >
-              <Icon>
-                <path d="M9 3.75V14.25" />
-                <path d="M3.75 9H14.25" />
-              </Icon>
-            </button>
-          )}
-        </Tooltip>
       </header>
+
+      <div className="home-actions">
+        <button
+          type="button"
+          className="button button--secondary"
+          onClick={() => createDialog.current?.showModal()}
+        >
+          <Icon>
+            <path d="M9 3.75V14.25" />
+            <path d="M3.75 9H14.25" />
+          </Icon>
+          Nova página
+        </button>
+      </div>
 
       {pages.length === 0 ? (
         <p className="landing-pages__empty">Você ainda não tem landing pages.</p>
@@ -82,12 +80,7 @@ export default function LandingPagesPage() {
         </ul>
       )}
 
-      <FormDialog
-        ref={createDialog}
-        title="Nova landing page"
-        submitLabel="Criar"
-        onSubmit={create}
-      >
+      <FormDialog ref={createDialog} title="Nova página" submitLabel="Criar" onSubmit={create}>
         <p className="form-dialog__text">Ela nasce com o Documento de Conteúdo vazio.</p>
         <label className="field">
           <span>Nome</span>

@@ -1,5 +1,4 @@
-// A linha do topo da página inicial: as abas à esquerda e as ferramentas da aba aberta à
-// direita, sobre a mesma linha de base. A linha de baixo é desta barra, e não das abas.
+// A linha das abas da página inicial. A linha de baixo é desta barra, e não das abas.
 .home-bar {
   display: flex;
   flex-wrap: wrap;
@@ -21,15 +20,15 @@
   .tabs__tab {
     text-align: center;
   }
-
-  > .tooltip,
-  .home-bar__tools {
-    margin-bottom: calc(var(--spacing) * 1.5);
-  }
 }
 
-.home-bar__tools {
+// A linha logo abaixo das abas: o botão de criar da aba à esquerda e, em Arquivos, a visão à
+// direita.
+.home-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: calc(var(--spacing) * 2);
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 3);
+  margin-bottom: calc(var(--spacing) * 4);
 }

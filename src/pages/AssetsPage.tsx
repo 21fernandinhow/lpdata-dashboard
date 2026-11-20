@@ -80,37 +80,31 @@ export default function AssetsPage() {
       <header className="home-bar">
         <h2 className="visually-hidden">Arquivos</h2>
         <HomeTabs current="assets" />
-        <div className="home-bar__tools">
-          <Tooltip label="Enviar arquivo">
-            {(tooltipId) => (
-              <button
-                type="button"
-                className="button button--ghost button--icon"
-                aria-labelledby={tooltipId}
-                disabled={upload !== null}
-                onClick={() => inputRef.current?.click()}
-              >
-                <Icon>
-                  <path d="M9 3.75V14.25" />
-                  <path d="M3.75 9H14.25" />
-                </Icon>
-              </button>
-            )}
-          </Tooltip>
-          {/* O seletor nativo, aberto pelo +. Um arquivo por vez. */}
-          <input
-            ref={inputRef}
-            type="file"
-            className="visually-hidden"
-            aria-label="Arquivo para enviar"
-            tabIndex={-1}
-            onChange={handleFile}
-          />
-        </div>
       </header>
 
-      {/* A visão fica entre a barra das abas e o conteúdo. */}
-      <div className="assets__view">
+      {/* Entre a barra das abas e o conteúdo: adicionar à esquerda e a visão à direita. */}
+      <div className="home-actions">
+        <button
+          type="button"
+          className="button button--secondary"
+          disabled={upload !== null}
+          onClick={() => inputRef.current?.click()}
+        >
+          <Icon>
+            <path d="M9 3.75V14.25" />
+            <path d="M3.75 9H14.25" />
+          </Icon>
+          Adicionar arquivo
+        </button>
+        {/* O seletor nativo, aberto pelo botão. Um arquivo por vez. */}
+        <input
+          ref={inputRef}
+          type="file"
+          className="visually-hidden"
+          aria-label="Arquivo para enviar"
+          tabIndex={-1}
+          onChange={handleFile}
+        />
         <nav className="segmented" aria-label="Visão">
           <Link
             to={{ search: `?${HOME_TAB_PARAM}=${ASSETS_TAB}` }}

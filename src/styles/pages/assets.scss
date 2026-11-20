@@ -2,12 +2,6 @@
 
 // A aba Assets da página inicial: os arquivos da conta, em grade ou em linhas.
 
-.assets__view {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: calc(var(--spacing) * 4);
-}
-
 .assets__upload {
   display: flex;
   flex-wrap: wrap;
