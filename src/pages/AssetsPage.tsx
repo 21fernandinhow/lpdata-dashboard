@@ -86,7 +86,7 @@ export default function AssetsPage() {
       <div className="home-actions">
         <button
           type="button"
-          className="button button--secondary"
+          className="button button--ghost"
           disabled={upload !== null}
           onClick={() => inputRef.current?.click()}
         >

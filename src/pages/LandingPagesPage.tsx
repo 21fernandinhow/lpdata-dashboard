@@ -52,7 +52,7 @@ export default function LandingPagesPage() {
       <div className="home-actions">
         <button
           type="button"
-          className="button button--secondary"
+          className="button button--ghost"
           onClick={() => createDialog.current?.showModal()}
         >
           <Icon>
