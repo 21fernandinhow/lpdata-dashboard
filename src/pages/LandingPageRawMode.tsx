@@ -162,7 +162,12 @@ export function LandingPageRawMode({ page, draft, onDraftChange, dirty, onSaved 
       />
 
       <a className="raw-mode__docs" href={CONTRACT_DOCS} target="_blank" rel="noreferrer">
-        Como escrever o Documento de Conteúdo
+        <Icon>
+          <circle cx="9" cy="9" r="7.25" />
+          <path d="M9 12.25V8.5" />
+          <path d="M9 5.75H9.01" />
+        </Icon>
+        <span>Como escrever o Documento de Conteúdo</span>
       </a>
     </div>
   )
