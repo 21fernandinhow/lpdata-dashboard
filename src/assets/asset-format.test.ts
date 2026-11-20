@@ -1,4 +1,4 @@
-import { formatBytes, previewKind, typeLabel } from "@/assets/asset-format"
+import { filenameFromUrl, formatBytes, previewKind, typeLabel } from "@/assets/asset-format"
 
 describe("formatBytes", () => {
   it.each([
@@ -32,7 +32,23 @@ describe("previewKind", () => {
     [{ filename: "logo.svg", content_type: "application/octet-stream" }, "svg"],
     [{ filename: "menu.pdf", content_type: "application/pdf" }, "file"],
     [{ filename: "intro.mp4", content_type: "video/mp4" }, "file"],
+    // Sem content_type, como uma URL digitada, vale a extensão.
+    [{ filename: "banner.PNG", content_type: "" }, "image"],
+    [{ filename: "foto.jpeg", content_type: "" }, "image"],
+    [{ filename: "video.mp4", content_type: "" }, "file"],
   ])("%j é %s", (asset, kind) => {
     expect(previewKind(asset)).toBe(kind)
+  })
+})
+
+describe("filenameFromUrl", () => {
+  it.each([
+    ["https://api.lpdata.io/rails/active_storage/blobs/redirect/abc/hero.webp", "hero.webp"],
+    ["https://cdn.exemplo.com/img/Meu%20Banner.png?v=2#x", "Meu Banner.png"],
+    ["https://exemplo.com/", ""],
+    ["não é url", ""],
+    ["", ""],
+  ])("%s é %j", (url, name) => {
+    expect(filenameFromUrl(url)).toBe(name)
   })
 })

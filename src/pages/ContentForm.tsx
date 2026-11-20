@@ -15,6 +15,8 @@ import { FormDialog } from "@/components/FormDialog"
 import { FormDialogError } from "@/components/form-dialog-error"
 import { Icon } from "@/components/Icon"
 import { Tooltip } from "@/components/Tooltip"
+import { filenameFromUrl, previewKind, typeLabel } from "@/assets/asset-format"
+import { AssetPicker, type AssetPickerHandle } from "@/pages/AssetPicker"
 import {
   EDITABLE_TYPES,
   type EditableType,
@@ -66,6 +68,8 @@ type FormActions = {
   addItem: (at: Segment[], path: string, length: number) => void
   changeType: (at: Segment[], type: EditableType) => void
   onFieldChange: (path: string, value: FieldValue) => void
+  // Abre o seletor de assets para um campo hosted_file.
+  pickAsset: (path: string) => void
 }
 
 const FormActionsContext = createContext<FormActions | null>(null)
@@ -89,6 +93,7 @@ export function ContentForm({
 }: ContentFormProps) {
   const rootRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const pickerRef = useRef<AssetPickerHandle>(null)
   const [action, setAction] = useState<Action | null>(null)
   const [created, setCreated] = useState<ReadonlySet<string>>(new Set())
   const rootIsList = Array.isArray(document)
@@ -110,7 +115,7 @@ export function ContentForm({
       const element = elementOf(path)
       if (!element) return
       reveal(element)
-      const control = element.querySelector<HTMLElement>("input, textarea")
+      const control = element.querySelector<HTMLElement>("input, textarea, .file-field button")
       if (control) control.focus()
       else element.scrollIntoView({ block: "center" })
     },
@@ -145,6 +150,9 @@ export function ContentForm({
       onDocumentChange(changeType(document, at, type))
     },
     onFieldChange,
+    pickAsset(path) {
+      pickerRef.current?.open((asset) => onFieldChange(path, asset.public_url))
+    },
   }
 
   async function submit(form: FormData) {
@@ -186,6 +194,7 @@ export function ContentForm({
         />
       </div>
       <StructureDialog ref={dialogRef} action={action} onSubmit={submit} />
+      <AssetPicker ref={pickerRef} />
     </FormActionsContext>
   )
 }
@@ -434,6 +443,7 @@ type FieldNode = Extract<FormNode, { kind: "field" }>
 function Field({ node, messages }: { node: FieldNode; messages?: string[] }) {
   const actions = useFormActions()
   const id = useId()
+  const labelId = useId()
   const descriptionId = useId()
   // O número digitado fica aqui enquanto não é número: o documento só recebe número válido.
   const [numberText, setNumberText] = useState(() => String(node.value))
@@ -481,26 +491,57 @@ function Field({ node, messages }: { node: FieldNode; messages?: string[] }) {
         onChange={(event) => onChange(event.target.value)}
       />
     )
+  } else if (node.type === "hosted_file") {
+    control = (
+      <HostedFile
+        label={node.label}
+        url={node.value as string}
+        onPick={() => actions.pickAsset(node.path)}
+        onClear={() => onChange("")}
+      />
+    )
   } else {
-    // url, external_file e, até a escolha de asset (#17), hosted_file: endereços.
+    // url e external_file: endereços digitados. O external_file mostra a prévia, como o hosted_file.
     const isAddress = node.type !== "string"
     control = (
-      <input
-        {...common}
-        type={isAddress ? "url" : "text"}
-        spellCheck={isAddress ? false : undefined}
-        value={node.value as string}
-        onChange={(event) => onChange(event.target.value)}
-      />
+      <>
+        <input
+          {...common}
+          type={isAddress ? "url" : "text"}
+          spellCheck={isAddress ? false : undefined}
+          value={node.value as string}
+          onChange={(event) => onChange(event.target.value)}
+        />
+        {node.type === "external_file" && (
+          <FilePreview label={node.label} url={node.value as string} />
+        )}
+      </>
     )
   }
 
+  // Os campos de arquivo são grupos com o nome do campo: o hosted_file não tem um input só.
+  const isFile = node.type === "hosted_file" || node.type === "external_file"
+
   return (
-    <div className="content-form__field" data-path={node.path}>
+    <div
+      className="content-form__field"
+      data-path={node.path}
+      role={isFile ? "group" : undefined}
+      aria-labelledby={isFile ? labelId : undefined}
+      aria-describedby={
+        node.type === "hosted_file" && description.length ? descriptionId : undefined
+      }
+    >
       <div className="content-form__heading">
-        <label htmlFor={id} className="content-form__label">
-          {node.label}
-        </label>
+        {node.type === "hosted_file" ? (
+          <span id={labelId} className="content-form__label">
+            {node.label}
+          </span>
+        ) : (
+          <label id={labelId} htmlFor={id} className="content-form__label">
+            {node.label}
+          </label>
+        )}
         <select
           className="content-form__type"
           aria-label={`Tipo de ${node.label}`}
@@ -518,6 +559,68 @@ function Field({ node, messages }: { node: FieldNode; messages?: string[] }) {
       {control}
       <FieldErrors id={descriptionId} messages={description} />
     </div>
+  )
+}
+
+// O hosted_file: a prévia, o nome do arquivo escolhido, escolher pelo seletor de assets e limpar.
+function HostedFile({
+  label,
+  url,
+  onPick,
+  onClear,
+}: {
+  label: string
+  url: string
+  onPick: () => void
+  onClear: () => void
+}) {
+  return (
+    <div className="file-field">
+      <FilePreview label={label} url={url} />
+      <div className="file-field__info">
+        <span className="file-field__name">
+          {url ? filenameFromUrl(url) || url : "Nenhum arquivo escolhido."}
+        </span>
+        <div className="file-field__buttons">
+          <button
+            type="button"
+            className="button button--secondary button--small"
+            aria-label={`Escolher arquivo para ${label}`}
+            onClick={onPick}
+          >
+            Escolher arquivo
+          </button>
+          {url && (
+            <button
+              type="button"
+              className="button button--ghost button--small"
+              aria-label={`Limpar ${label}`}
+              onClick={onClear}
+            >
+              Limpar
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// A prévia de um arquivo pela URL: a imagem, quando o nome dela é de imagem; senão, o tipo.
+function FilePreview({ label, url }: { label: string; url: string }) {
+  if (!url) return null
+  const filename = filenameFromUrl(url)
+  const file = { filename, content_type: "" }
+  return (
+    <span className="file-field__preview">
+      {previewKind(file) === "image" ? (
+        <img src={url} alt={`Prévia de ${label}`} loading="lazy" />
+      ) : (
+        <span className="asset__badge" aria-hidden="true">
+          {filename ? typeLabel(file) : "URL"}
+        </span>
+      )}
+    </span>
   )
 }
 

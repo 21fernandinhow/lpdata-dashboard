@@ -91,6 +91,7 @@ describe("Modo Formulário", () => {
 
   it("altera um valor de cada um dos sete tipos e grava, sem mudar a estrutura", async () => {
     const page = await openForm()
+    const asset = fakeApi.createAsset(EMAIL, "b.webp", "image/webp", 1024)
     const hero = section("hero")
 
     await replace(within(hero).getByLabelText("title"), "Olá de novo")
@@ -98,8 +99,11 @@ describe("Modo Formulário", () => {
     await replace(within(hero).getByLabelText("price"), "12.5")
     await userEvent.click(within(hero).getByLabelText("visible"))
     await replace(within(hero).getByLabelText("link"), "https://b.io")
-    await replace(within(hero).getByLabelText("image"), "https://cdn.io/b.webp")
-    await replace(within(hero).getByLabelText("video"), "https://videos.io/y")
+    // O hosted_file se escolhe pelo seletor de assets (#17).
+    await userEvent.click(within(hero).getByRole("button", { name: "Escolher arquivo para image" }))
+    const picker = screen.getByRole("dialog", { name: "Escolher arquivo" })
+    await userEvent.click(await within(picker).findByRole("button", { name: /b\.webp/ }))
+    await replace(within(hero).getByRole("textbox", { name: "video" }), "https://videos.io/y")
     const item = section("Item 1", section("features"))
     await userEvent.click(within(item).getByText("Item 1"))
     await replace(within(item).getByLabelText("label"), "Muito rápido")
@@ -115,7 +119,7 @@ describe("Modo Formulário", () => {
         price: { value: 12.5, type: "number" },
         visible: { value: false, type: "boolean" },
         link: { value: "https://b.io", type: "url" },
-        image: { value: "https://cdn.io/b.webp", type: "hosted_file" },
+        image: { value: asset.public_url, type: "hosted_file" },
         video: { value: "https://videos.io/y", type: "external_file" },
       },
       features: [{ label: { value: "Muito rápido", type: "string" } }],
