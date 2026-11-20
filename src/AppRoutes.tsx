@@ -2,6 +2,7 @@ import { createBrowserRouter, type RouteObject } from "react-router-dom"
 import { AppShell } from "@/components/AppShell"
 import { RouteError } from "@/components/ErrorBoundary"
 import {
+  AssetsPage,
   LandingPagePage,
   LandingPagesPage,
   LoginPage,
@@ -21,6 +22,7 @@ const routes: RouteObject[] = [
         children: [
           { index: true, element: <LandingPagesPage /> },
           { path: "landing-pages/:id", element: <LandingPagePage /> },
+          { path: "assets", element: <AssetsPage /> },
         ],
       },
       {

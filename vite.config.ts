@@ -36,6 +36,9 @@ export default defineConfig(({ command, mode }) => {
       environment: "jsdom",
       globals: true,
       setupFiles: ["./vitest.setup.ts"],
+      // Os testes de integração digitam como o usuário e passam de 5 s com a suíte inteira em
+      // paralelo, embora levem 1 s sozinhos.
+      testTimeout: 15_000,
       env: {
         VITE_LPDATA_API_URL: "https://api.test.lpdata.io",
       },

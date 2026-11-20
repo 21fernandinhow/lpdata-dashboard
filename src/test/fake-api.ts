@@ -20,11 +20,22 @@ type LandingPageRecord = {
   updated_at: string
 }
 
+// O asset como o AssetSerializer da API o devolve.
+type AssetRecord = {
+  id: number
+  user_id: number
+  filename: string
+  content_type: string
+  byte_size: number
+  public_url: string
+}
+
 type LandingPageParams = { name?: string; current_data?: unknown; allowed_hosts?: string[] }
 
 const WARDEN_401 = { error: "You need to sign in or sign up before continuing." }
 const INVALID_REFRESH = { errors: ["Invalid or expired refresh token"] }
 const LANDING_PAGE_404 = { error: "Landing page not found" }
+const ASSET_404 = { error: "Asset not found" }
 
 export const url = (path: string) => `${env.apiBaseUrl}${path}`
 
@@ -50,6 +61,8 @@ function createFakeApi() {
   let log: LoggedRequest[] = []
   let landingPages: LandingPageRecord[] = []
   let landingPageSequence = 0
+  let assets: AssetRecord[] = []
+  let assetSequence = 0
 
   function issueTokens(user: User) {
     sequence += 1
@@ -78,8 +91,13 @@ function createFakeApi() {
       method: request.method,
       path: new URL(request.url).pathname,
       headers: request.headers,
-      body: text ? JSON.parse(text) : undefined,
+      // Só JSON vira objeto. Um multipart, como o envio de asset, fica como texto.
+      body: !text ? undefined : isJson(request) ? JSON.parse(text) : text,
     })
+  }
+
+  function isJson(request: Request) {
+    return request.headers.get("Content-Type")?.startsWith("application/json") ?? false
   }
 
   // Com o Accept do navegador, o Rails trata a requisição como navegação e redireciona.
@@ -124,6 +142,18 @@ function createFakeApi() {
       user_id: userId,
       created_at: now,
       updated_at: now,
+    }
+  }
+
+  function buildAsset(userId: number, file: { name: string; type: string; size: number }) {
+    assetSequence += 1
+    return {
+      id: assetSequence,
+      user_id: userId,
+      filename: file.name,
+      content_type: file.type || "application/octet-stream",
+      byte_size: file.size,
+      public_url: `${env.apiBaseUrl}/rails/active_storage/blobs/redirect/${assetSequence}/${file.name}`,
     }
   }
 
@@ -236,6 +266,38 @@ function createFakeApi() {
       landingPages = landingPages.filter((page) => page.id !== found.id)
       return empty(204)
     }),
+
+    http.get(url("/assets"), ({ request }) => {
+      const user = bearerUser(request)
+      if (!user) return json(WARDEN_401, 401)
+      return json({ assets: assets.filter((asset) => asset.user_id === user.id) })
+    }),
+
+    // Envio em multipart, no campo asset[file]. Sem arquivo, o modelo recusa.
+    http.post(url("/assets"), async ({ request }) => {
+      const user = bearerUser(request)
+      if (!user) return json(WARDEN_401, 401)
+      const file = (await request.formData()).get("asset[file]")
+      // Um campo de arquivo vem como objeto, e um campo de texto, como string. instanceof File
+      // não serve: o File do jsdom e o do Node são classes diferentes.
+      if (!file || typeof file === "string") {
+        return json({ errors: ["File must be attached"] }, 422)
+      }
+      const record = buildAsset(user.id, file)
+      assets.push(record)
+      return json({ asset: record }, 201)
+    }),
+
+    http.delete(url("/assets/:id"), ({ request, params }) => {
+      const user = bearerUser(request)
+      if (!user) return json(WARDEN_401, 401)
+      const found = assets.find(
+        (asset) => asset.id === Number(params.id) && asset.user_id === user.id,
+      )
+      if (!found) return json(ASSET_404, 404)
+      assets = assets.filter((asset) => asset.id !== found.id)
+      return empty(204)
+    }),
   ]
 
   return {
@@ -252,6 +314,8 @@ function createFakeApi() {
       log = []
       landingPages = []
       landingPageSequence = 0
+      assets = []
+      assetSequence = 0
     },
 
     // Cria uma landing page para o usuário, como uma criação anterior.
@@ -261,6 +325,20 @@ function createFakeApi() {
       const record = buildLandingPage(user.id, { name, current_data: currentData })
       landingPages.push(record)
       return record
+    },
+
+    // Cria um asset para o usuário, como um envio anterior.
+    createAsset(email: string, filename: string, contentType: string, byteSize: number) {
+      const user = users.find((existing) => existing.email === email)
+      if (!user) throw new Error(`Usuário inexistente: ${email}`)
+      const record = buildAsset(user.id, { name: filename, type: contentType, size: byteSize })
+      assets.push(record)
+      return record
+    },
+
+    // Os assets gravados, de todas as contas.
+    assets() {
+      return assets
     },
 
     // As landing pages gravadas, de todas as contas.

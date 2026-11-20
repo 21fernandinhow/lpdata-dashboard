@@ -47,6 +47,11 @@ describe("userMessage", () => {
     )
   })
 
+  it("no envio de arquivo, 422 é o arquivo recusado e 413 é grande demais", () => {
+    expect(userMessage(responseError(422), "upload")).toBe("O arquivo não foi aceito.")
+    expect(userMessage(responseError(413), "upload")).toBe("O arquivo é grande demais.")
+  })
+
   it("fora do login, 401 é sessão expirada", () => {
     expect(userMessage(responseError(401))).toBe("Sua sessão expirou. Entre de novo.")
   })

@@ -1,4 +1,8 @@
+import { configure } from "@testing-library/react"
 import "@testing-library/jest-dom/vitest"
+
+// O findBy espera 1 s por padrão, pouco para a suíte inteira em paralelo.
+configure({ asyncUtilTimeout: 3000 })
 
 // jsdom não implementa os métodos de <dialog>. A interface usa <dialog> nativo (ADR 0007).
 if (!HTMLDialogElement.prototype.showModal) {

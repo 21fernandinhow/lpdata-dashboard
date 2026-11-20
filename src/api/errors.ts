@@ -6,6 +6,8 @@ export const MESSAGES = {
   invalidCredentials: "Email ou senha incorretos.",
   sessionExpired: "Sua sessão expirou. Entre de novo.",
   signUpRejected: "Não foi possível criar a conta. Confira o email e a senha.",
+  fileRejected: "O arquivo não foi aceito.",
+  fileTooLarge: "O arquivo é grande demais.",
   validation: "Não foi possível salvar. Confira os dados.",
   notFound: "Não encontrado.",
   tooManyRequests: "Muitas tentativas. Aguarde um minuto e tente de novo.",
@@ -15,7 +17,7 @@ export const MESSAGES = {
 } as const
 
 // Onde o erro aconteceu, para os casos em que o mesmo status quer dizer coisas diferentes.
-export type ErrorSituation = "sign-in" | "sign-up" | "default"
+export type ErrorSituation = "sign-in" | "sign-up" | "upload" | "default"
 
 export function userMessage(error: unknown, situation: ErrorSituation = "default"): string {
   if (!isAxiosError(error)) return MESSAGES.unexpected
@@ -24,7 +26,13 @@ export function userMessage(error: unknown, situation: ErrorSituation = "default
   const { status } = error.response
   if (status === 401)
     return situation === "sign-in" ? MESSAGES.invalidCredentials : MESSAGES.sessionExpired
-  if (status === 422) return situation === "sign-up" ? MESSAGES.signUpRejected : MESSAGES.validation
+  if (status === 422) {
+    if (situation === "sign-up") return MESSAGES.signUpRejected
+    if (situation === "upload") return MESSAGES.fileRejected
+    return MESSAGES.validation
+  }
+  // 413 vem do servidor na frente da API, antes de o Rails ver o arquivo.
+  if (status === 413) return MESSAGES.fileTooLarge
   if (status === 404) return MESSAGES.notFound
   if (status === 429) return MESSAGES.tooManyRequests
   if (status >= 500) return MESSAGES.serverError

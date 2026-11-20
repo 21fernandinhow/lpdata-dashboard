@@ -1,0 +1,186 @@
+@use "../utils/responsivity" as *;
+
+// Os arquivos da conta, em grade ou em linhas.
+
+.assets {
+  width: 100%;
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 4);
+}
+
+.assets__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 4);
+  margin-bottom: calc(var(--spacing) * 6);
+}
+
+.assets__title {
+  font-size: var(--text-2xl);
+
+  @include from("sm") {
+    font-size: var(--text-3xl);
+  }
+}
+
+.assets__tools {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+}
+
+.assets__upload {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+  margin-bottom: calc(var(--spacing) * 4);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
+.assets__progress {
+  flex: 1;
+  min-width: 8rem;
+  height: 0.375rem;
+  accent-color: var(--color-heading);
+}
+
+.assets__error {
+  margin-bottom: calc(var(--spacing) * 4);
+  padding: calc(var(--spacing) * 3);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  color: var(--color-heading);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.assets__empty {
+  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 4);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.assets__list {
+  list-style: none;
+}
+
+.asset {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  transition: border-color 150ms;
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--color-heading);
+  }
+}
+
+.asset__preview {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background-color: var(--color-surface);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.asset__badge {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.asset__info {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 0.5);
+  min-width: 0;
+}
+
+.asset__name {
+  overflow: hidden;
+  color: var(--color-heading);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.asset__meta,
+.asset__note {
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.asset__actions {
+  display: flex;
+  gap: calc(var(--spacing) * 0.5);
+}
+
+// Grade: cartões com a miniatura em cima.
+.assets__list--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: calc(var(--spacing) * 3);
+
+  .asset {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .asset__preview {
+    aspect-ratio: 4 / 3;
+    border-bottom: 1px dashed var(--color-border);
+  }
+
+  .asset__info {
+    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 3) 0;
+  }
+
+  .asset__actions {
+    justify-content: flex-end;
+    padding: calc(var(--spacing) * 1) calc(var(--spacing) * 2) calc(var(--spacing) * 2);
+  }
+}
+
+// Linhas: miniatura pequena à esquerda, ações à direita.
+.assets__list--rows {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 2);
+
+  .asset {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 3);
+    padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+  }
+
+  .asset__preview {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-md);
+
+    .asset__badge {
+      font-size: var(--text-xs);
+    }
+  }
+
+  .asset__info {
+    flex: 1;
+  }
+}
