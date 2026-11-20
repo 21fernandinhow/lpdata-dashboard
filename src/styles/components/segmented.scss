@@ -1,0 +1,26 @@
+// Seletor de duas ou mais opções lado a lado, como links com aria-current="page".
+
+.segmented {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.segmented__option {
+  padding: calc(var(--spacing) * 1) calc(var(--spacing) * 3);
+  border-radius: var(--radius-md);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-heading);
+  }
+
+  &[aria-current="page"] {
+    background-color: var(--color-hover);
+    color: var(--color-heading);
+  }
+}

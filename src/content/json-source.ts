@@ -1,14 +1,22 @@
 // Leitura do texto do Modo Raw. Faz o que JSON.parse faz, e mais duas coisas que ele não dá:
-// a linha e a coluna do primeiro erro, com mensagem em português, e a linha de cada caminho no
-// formato que a API usa nos erros de contrato ($.hero.title, $.features[0].label).
+// a linha e a coluna do primeiro erro, com mensagem em português, e a linha e o trecho de cada
+// caminho no formato que a API usa nos erros de contrato ($.hero.title, $.features[0].label).
 //
 // Não é validação de contrato (ADR 0006): só sintaxe de JSON, que o cliente precisa conferir de
 // qualquer jeito para montar a requisição.
 
 export type JsonSourceError = { line: number; column: number; message: string }
 
+// O trecho de um valor no texto: text.slice(start, end).
+export type JsonSpan = { start: number; end: number }
+
 export type JsonSource =
-  | { ok: true; value: unknown; lineOf: (path: string) => number | undefined }
+  | {
+      ok: true
+      value: unknown
+      lineOf: (path: string) => number | undefined
+      spanOf: (path: string) => JsonSpan | undefined
+    }
   | { ok: false; error: JsonSourceError }
 
 class SyntaxProblem extends Error {
@@ -47,6 +55,7 @@ export function parseJsonSource(text: string): JsonSource {
   }
 
   const lines = new Map<string, number>()
+  const spans = new Map<string, JsonSpan>()
   let position = 0
 
   function skipWhitespace() {
@@ -81,7 +90,14 @@ export function parseJsonSource(text: string): JsonSource {
 
   function readValue(path: string): unknown {
     skipWhitespace()
-    lines.set(path, lineAt(position))
+    const start = position
+    lines.set(path, lineAt(start))
+    const value = readBareValue(path)
+    spans.set(path, { start, end: position })
+    return value
+  }
+
+  function readBareValue(path: string): unknown {
     const char = text[position]
 
     if (char === "{") return readObject(path)
@@ -169,7 +185,12 @@ export function parseJsonSource(text: string): JsonSource {
     const value = readValue("$")
     skipWhitespace()
     if (position < text.length) fail("Texto depois do fim do documento.")
-    return { ok: true, value, lineOf: (path) => lines.get(path) }
+    return {
+      ok: true,
+      value,
+      lineOf: (path) => lines.get(path),
+      spanOf: (path) => spans.get(path),
+    }
   } catch (problem) {
     if (!(problem instanceof SyntaxProblem)) throw problem
     const line = lineAt(problem.offset)

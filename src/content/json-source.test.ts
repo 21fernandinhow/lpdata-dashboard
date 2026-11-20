@@ -61,6 +61,23 @@ describe("parseJsonSource", () => {
     })
   })
 
+  describe("spanOf", () => {
+    it("dá o trecho exato do valor de um caminho", () => {
+      const result = parseJsonSource(SOURCE)
+      if (!result.ok) throw new Error("documento inválido")
+      const slice = (path: string) => {
+        const span = result.spanOf(path)
+        return span && SOURCE.slice(span.start, span.end)
+      }
+
+      expect(slice("$.hero.title.value")).toBe('"Olá"')
+      expect(slice("$.features[1].label.value")).toBe("3")
+      expect(slice("$.hero.title")).toBe('{ "value": "Olá", "type": "string" }')
+      expect(slice("$")).toBe(SOURCE)
+      expect(slice("$.nada")).toBeUndefined()
+    })
+  })
+
   describe("erro", () => {
     it.each([
       ["", 1, 1, "Esperava um valor."],

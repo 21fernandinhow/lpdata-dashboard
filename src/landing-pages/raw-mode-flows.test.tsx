@@ -24,12 +24,12 @@ afterEach(() => {
 })
 afterAll(() => fakeApi.server.close())
 
-// Abre a landing page já com sessão, na aba Conteúdo.
+// Abre a landing page já com sessão, na aba Conteúdo, no Modo Raw.
 async function openContent() {
   fakeApi.createUser(EMAIL, "senha-secreta")
   localStorage.setItem(REFRESH_TOKEN_KEY, fakeApi.openSession(EMAIL))
   const page = fakeApi.createLandingPage(EMAIL, "Lançamento", DOCUMENT)
-  const app = renderApp(`/landing-pages/${page.id}`)
+  const app = renderApp(`/landing-pages/${page.id}?modo=raw`)
   await screen.findByLabelText("Documento de Conteúdo")
   return { page, app }
 }
@@ -76,7 +76,7 @@ describe("Modo Raw", () => {
     expect(saveButton()).toBeDisabled()
 
     app.unmount()
-    renderApp(`/landing-pages/${page.id}`)
+    renderApp(`/landing-pages/${page.id}?modo=raw`)
 
     expect(await screen.findByLabelText("Documento de Conteúdo")).toHaveValue(format(EDITED))
   })
@@ -149,6 +149,8 @@ describe("Modo Raw", () => {
     await replaceDocument(format(EDITED))
     await userEvent.click(screen.getByRole("link", { name: "Publicação" }))
     await userEvent.click(screen.getByRole("link", { name: "Conteúdo" }))
+    // Conteúdo abre no Formulário; o texto continua o mesmo ao voltar para o Raw.
+    await userEvent.click(screen.getByRole("link", { name: "Raw" }))
 
     expect(await screen.findByLabelText("Documento de Conteúdo")).toHaveValue(format(EDITED))
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument()

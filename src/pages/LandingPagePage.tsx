@@ -17,7 +17,7 @@ import { Tooltip } from "@/components/Tooltip"
 import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard"
 import { formatDocument } from "@/content/json-source"
 import { LandingPagePublication } from "@/pages/LandingPagePublication"
-import { LandingPageRawMode } from "@/pages/LandingPageRawMode"
+import { LandingPageContent } from "@/pages/LandingPageContent"
 import { useApi } from "@/session/context"
 
 // A aba aberta fica no endereço, para sobreviver ao recarregamento e ao histórico.
@@ -165,7 +165,7 @@ function LandingPageView({ page, onUpdated }: LandingPageViewProps) {
       {onPublication ? (
         <LandingPagePublication page={page} onUpdated={onUpdated} />
       ) : (
-        <LandingPageRawMode
+        <LandingPageContent
           page={page}
           draft={draft}
           onDraftChange={setDraft}
