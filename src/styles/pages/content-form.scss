@@ -11,7 +11,8 @@
   border-radius: var(--radius-lg);
 
   > summary {
-    padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+    padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3) calc(var(--spacing) * 2)
+      calc(var(--spacing) * 4);
     color: var(--color-heading);
     font-family: var(--font-mono);
     font-size: var(--text-sm);
@@ -101,10 +102,8 @@
   }
 }
 
-// Renomear e remover, à direita do nome do nó.
-.content-form__node-actions {
-  display: flex;
-  gap: calc(var(--spacing) * 0.5);
+// O menos de remover fica à direita do cabeçalho do campo ou da seção.
+.content-form__remove {
   margin-left: auto;
 }
 
@@ -113,8 +112,7 @@
   height: 1.75rem;
 }
 
-// O rodapé de cada seção: adicionar dentro dela, à esquerda, e renomear e remover a própria
-// seção, à direita. Os botões da raiz ficam no fim do formulário.
+// O rodapé de cada seção: os botões que criam dentro dela. Os da raiz ficam no fim do formulário.
 .content-form__group-footer {
   display: flex;
   flex-wrap: wrap;
@@ -145,4 +143,31 @@
   color: var(--color-heading);
   font-size: var(--text-sm);
   font-weight: 500;
+}
+
+// O summary em linha, com o nome, o lápis e o menos. O marcador nativo some com o flex, então a
+// seta é desenhada aqui e gira com a seção aberta.
+.content-form__summary {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 1);
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::before {
+    width: 0;
+    height: 0;
+    margin-right: calc(var(--spacing) * 1.5);
+    border-block: 0.3rem solid transparent;
+    border-left: 0.4rem solid currentcolor;
+    content: "";
+    transition: transform 150ms;
+  }
+
+  details[open] > &::before {
+    transform: rotate(90deg);
+  }
 }
