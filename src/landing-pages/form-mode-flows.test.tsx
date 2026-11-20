@@ -68,6 +68,18 @@ describe("Modo Formulário", () => {
     expect(section("Item 1", section("features"))).not.toHaveAttribute("open")
   })
 
+  it("documento vazio abre no JSON", async () => {
+    await openForm({})
+
+    expect(screen.getByRole("link", { name: "JSON" })).toHaveAttribute("aria-current", "page")
+    expect(await screen.findByLabelText("Documento de Conteúdo")).toHaveValue("{}")
+
+    await userEvent.click(screen.getByRole("link", { name: "Formulário" }))
+
+    expect(window.location.search).toBe("?modo=formulario")
+    expect(screen.getByText(/O documento está vazio/)).toBeInTheDocument()
+  })
+
   it("altera um valor de cada um dos sete tipos e grava, sem mudar a estrutura", async () => {
     const page = await openForm()
     const hero = section("hero")

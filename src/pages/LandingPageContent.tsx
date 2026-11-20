@@ -26,10 +26,10 @@ type ContentProps = {
   onSaved: (page: LandingPage, text: string) => void
 }
 
-// O modo fica no endereço. O Formulário é o padrão: é o modo de quem não lê JSON. Na interface,
-// o Modo Raw se chama JSON.
+// O modo fica no endereço. Na interface, o Modo Raw se chama JSON.
 const MODE_PARAM = "modo"
 const RAW_MODE = "json"
+const FORM_MODE = "formulario"
 
 // O contrato do documento na documentação: Campos Editáveis, tipos e erros possíveis.
 const CONTRACT_DOCS = "https://lpdata.io/landing-pages#documento-de-conteúdo"
@@ -41,7 +41,11 @@ const SHORTCUT = /Mac|iPhone|iPad/.test(navigator.userAgent) ? "⌘S" : "Ctrl+S"
 export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved }: ContentProps) {
   const api = useApi()
   const [searchParams] = useSearchParams()
-  const onRaw = searchParams.get(MODE_PARAM) === RAW_MODE
+  // Sem modo no endereço, abre no Formulário, que é o modo de quem não lê JSON. Documento vazio
+  // abre no JSON: não há campo para editar, e a estrutura só se cria lá. A escolha é feita ao abrir
+  // e não muda enquanto se edita, para o modo não trocar sozinho no meio da digitação.
+  const [defaultMode] = useState(() => (isEmptyDocument(page.current_data) ? RAW_MODE : FORM_MODE))
+  const onRaw = (searchParams.get(MODE_PARAM) ?? defaultMode) === RAW_MODE
   const editorRef = useRef<JsonEditorHandle>(null)
   const formRef = useRef<ContentFormHandle>(null)
   const problemId = useId()
@@ -120,7 +124,7 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
       <div className="content__toolbar">
         <nav className="segmented" aria-label="Modo de edição">
           <Link
-            to={{ search: "" }}
+            to={{ search: `?${MODE_PARAM}=${FORM_MODE}` }}
             className="segmented__option"
             aria-current={onRaw ? undefined : "page"}
           >
@@ -239,4 +243,9 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
       </a>
     </div>
   )
+}
+
+function isEmptyDocument(document: unknown) {
+  if (Array.isArray(document)) return document.length === 0
+  return typeof document === "object" && document !== null && Object.keys(document).length === 0
 }
