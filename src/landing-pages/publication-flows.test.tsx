@@ -80,9 +80,8 @@ describe("identificador público", () => {
 
     await user.click(screen.getByRole("button", { name: "Copiar identificador público" }))
     expect(await navigator.clipboard.readText()).toBe(String(page.public_id))
-    expect(screen.getByRole("button", { name: "Copiar identificador público" })).toHaveTextContent(
-      "Copiado",
-    )
+    // O tooltip, que é o nome do botão, confirma a cópia.
+    expect(screen.getByRole("button", { name: "Copiado" })).toBeInTheDocument()
 
     await user.click(screen.getByRole("button", { name: "Copiar URL pública" }))
     expect(await navigator.clipboard.readText()).toBe(publicUrl)
