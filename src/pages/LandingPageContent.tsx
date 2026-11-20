@@ -2,6 +2,7 @@ import { useEffect, useEffectEvent, useId, useMemo, useRef, useState } from "rea
 import { Link, useSearchParams } from "react-router-dom"
 import { userMessage } from "@/api/errors"
 import { saveDocument, type LandingPage } from "@/api/landing-pages"
+import { DocsLink } from "@/components/DocsLink"
 import { Icon } from "@/components/Icon"
 import { JsonEditor, type JsonEditorHandle } from "@/components/JsonEditor"
 import { Tooltip } from "@/components/Tooltip"
@@ -239,14 +240,7 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
         />
       )}
 
-      <a className="content__docs" href={docs.href} target="_blank" rel="noreferrer">
-        <Icon>
-          <circle cx="9" cy="9" r="7.25" />
-          <path d="M9 12.25V8.5" />
-          <path d="M9 5.75H9.01" />
-        </Icon>
-        <span>{docs.label}</span>
-      </a>
+      <DocsLink href={docs.href}>{docs.label}</DocsLink>
     </div>
   )
 }

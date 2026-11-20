@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useSearchParams } from "react-router-dom"
+import { DocsLink } from "@/components/DocsLink"
 import { ASSETS_TAB, HOME_TAB_PARAM } from "@/components/HomeTabs"
 import { AssetsPage, LandingPagesPage } from "@/pages/lazy-pages"
 
@@ -21,12 +22,12 @@ export default function HomePage() {
       <header className="home__intro">
         <h1 className="home__title">Seu conteúdo</h1>
         <p className="home__text">
-          Crie landing pages, edite os textos e as imagens de cada uma e guarde os arquivos que elas
-          usam. O site de cada landing page mostra o que você salva aqui.{" "}
-          <a href={DASHBOARD_DOCS} target="_blank" rel="noreferrer">
-            Como usar o Dashboard
-          </a>
+          Aqui ficam as páginas e os arquivos da sua conta no LPData. Em <strong>Páginas</strong>,
+          crie uma landing page e abra-a para editar os textos, números, links e imagens dela. Em{" "}
+          <strong>Arquivos</strong>, envie imagens e outros arquivos e copie o endereço de cada um
+          para usar nas páginas.
         </p>
+        <DocsLink href={DASHBOARD_DOCS}>Como usar o Dashboard</DocsLink>
       </header>
       {opened.has("pages") && (
         <div hidden={tab !== "pages"}>
