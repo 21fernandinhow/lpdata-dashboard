@@ -5,8 +5,11 @@ if (!HTMLDialogElement.prototype.showModal) {
   HTMLDialogElement.prototype.showModal = function (this: HTMLDialogElement) {
     this.setAttribute("open", "")
   }
+  // O navegador dispara close ao fechar um dialog aberto, por qualquer caminho.
   HTMLDialogElement.prototype.close = function (this: HTMLDialogElement) {
+    if (!this.hasAttribute("open")) return
     this.removeAttribute("open")
+    this.dispatchEvent(new Event("close"))
   }
 }
 

@@ -17,6 +17,11 @@ afterEach(() => {
 })
 afterAll(() => fakeApi.server.close())
 
+// A rota protegida inicial é a lista de landing pages.
+function findLandingPages() {
+  return screen.findByRole("heading", { level: 1, name: "Landing pages" })
+}
+
 async function signIn(email: string, password: string) {
   await userEvent.type(await screen.findByLabelText("Email"), email)
   await userEvent.type(screen.getByLabelText("Senha"), password)
@@ -24,15 +29,15 @@ async function signIn(email: string, password: string) {
 }
 
 describe("sessão", () => {
-  it("login certo leva à rota pedida e mostra o email de /auth/me", async () => {
+  it("login certo leva à rota pedida e carrega as landing pages", async () => {
     fakeApi.createUser(EMAIL, PASSWORD)
     renderApp("/?origem=link")
 
     await signIn(EMAIL, PASSWORD)
 
-    expect(await screen.findByText(`Olá, ${EMAIL}`)).toBeInTheDocument()
+    expect(await findLandingPages()).toBeInTheDocument()
     expect(window.location.pathname + window.location.search).toBe("/?origem=link")
-    expect(fakeApi.requests("GET", "/auth/me")).toHaveLength(1)
+    expect(fakeApi.requests("GET", "/manage/landing_pages")).toHaveLength(1)
   })
 
   it("login errado mostra email ou senha incorretos", async () => {
@@ -81,13 +86,13 @@ describe("sessão", () => {
   it("um 401 renova a sessão e repete a requisição sem o usuário perceber", async () => {
     fakeApi.createUser(EMAIL, PASSWORD)
     localStorage.setItem(REFRESH_TOKEN_KEY, fakeApi.openSession(EMAIL))
-    // O access token da abertura do app vence antes do /auth/me.
+    // O access token da abertura do app vence antes da lista de landing pages.
     fakeApi.expireNextAccessToken()
     renderApp("/")
 
-    expect(await screen.findByText(`Olá, ${EMAIL}`)).toBeInTheDocument()
+    expect(await findLandingPages()).toBeInTheDocument()
     expect(fakeApi.requests("POST", "/auth/refresh")).toHaveLength(2)
-    expect(fakeApi.requests("GET", "/auth/me")).toHaveLength(2)
+    expect(fakeApi.requests("GET", "/manage/landing_pages")).toHaveLength(2)
     expect(screen.queryByRole("alert")).not.toBeInTheDocument()
   })
 
@@ -103,7 +108,7 @@ describe("sessão", () => {
     expect(await screen.findByText("Sua sessão expirou. Entre de novo.")).toBeInTheDocument()
     expect(window.location.pathname).toBe("/login")
     expect(fakeApi.requests("POST", "/auth/refresh")).toHaveLength(1)
-    expect(fakeApi.requests("GET", "/auth/me")).toHaveLength(1)
+    expect(fakeApi.requests("GET", "/manage/landing_pages")).toHaveLength(1)
     expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull()
   })
 
@@ -111,12 +116,12 @@ describe("sessão", () => {
     fakeApi.createUser(EMAIL, PASSWORD)
     const first = renderApp("/login")
     await signIn(EMAIL, PASSWORD)
-    await screen.findByText(`Olá, ${EMAIL}`)
+    await findLandingPages()
     first.unmount()
 
     renderApp("/")
 
-    expect(await screen.findByText(`Olá, ${EMAIL}`)).toBeInTheDocument()
+    expect(await findLandingPages()).toBeInTheDocument()
     expect(screen.queryByLabelText("Senha")).not.toBeInTheDocument()
     // Só o refresh token fica salvo. O access token vive só em memória.
     const stored = Object.values({ ...localStorage })
@@ -135,7 +140,7 @@ describe("sessão", () => {
     localStorage.setItem(REFRESH_TOKEN_KEY, fakeApi.openSession(EMAIL))
     fakeApi.server.use(http.delete(url("/auth/sign_out"), () => HttpResponse.error()))
     renderApp("/")
-    await screen.findByText(`Olá, ${EMAIL}`)
+    await findLandingPages()
 
     await userEvent.click(screen.getByRole("button", { name: "Conta" }))
     expect(screen.getByText(EMAIL)).toBeVisible()
@@ -151,7 +156,7 @@ describe("sessão", () => {
     // O login anterior emite o par 1. A abertura do app renova e recebe o par 2.
     localStorage.setItem(REFRESH_TOKEN_KEY, fakeApi.openSession(EMAIL))
     renderApp("/")
-    await screen.findByText(`Olá, ${EMAIL}`)
+    await findLandingPages()
 
     await userEvent.click(screen.getByRole("button", { name: "Conta" }))
     await userEvent.click(screen.getByRole("button", { name: "Sair" }))
@@ -166,7 +171,7 @@ describe("sessão", () => {
     fakeApi.createUser(EMAIL, PASSWORD)
     localStorage.setItem(REFRESH_TOKEN_KEY, fakeApi.openSession(EMAIL))
     renderApp("/")
-    await screen.findByText(`Olá, ${EMAIL}`)
+    await findLandingPages()
 
     // A outra aba apaga o refresh token, e esta recebe o evento storage.
     localStorage.removeItem(REFRESH_TOKEN_KEY)
