@@ -134,6 +134,15 @@ describe("Modo Raw", () => {
     expect(fakeApi.landingPages().find(({ id }) => id === page.id)?.current_data).toEqual(DOCUMENT)
   })
 
+  it("abaixo do editor, um link leva ao contrato na documentação", async () => {
+    await openContent()
+
+    const docs = screen.getByRole("link", { name: "Como escrever o Documento de Conteúdo" })
+
+    expect(docs).toHaveAttribute("href", "https://lpdata.io/landing-pages#documento-de-conteúdo")
+    expect(docs).toHaveAttribute("target", "_blank")
+  })
+
   it("trocar de aba mantém o Documento em Edição", async () => {
     await openContent()
 

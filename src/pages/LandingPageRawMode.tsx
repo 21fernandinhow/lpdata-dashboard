@@ -23,6 +23,9 @@ type RawModeProps = {
   onSaved: (page: LandingPage, text: string) => void
 }
 
+// O contrato do documento na documentação: Campos Editáveis, tipos e erros possíveis.
+const CONTRACT_DOCS = "https://lpdata.io/landing-pages#documento-de-conteúdo"
+
 const SHORTCUT = /Mac|iPhone|iPad/.test(navigator.userAgent) ? "⌘S" : "Ctrl+S"
 
 // O Modo Raw (ADR 0004): o Documento de Conteúdo como JSON, gravado por inteiro (ADR 0005). O
@@ -157,6 +160,10 @@ export function LandingPageRawMode({ page, draft, onDraftChange, dirty, onSaved 
         describedBy={problem ? problemId : undefined}
         invalid={problem !== null}
       />
+
+      <a className="raw-mode__docs" href={CONTRACT_DOCS} target="_blank" rel="noreferrer">
+        Como escrever o Documento de Conteúdo
+      </a>
     </div>
   )
 }
