@@ -102,8 +102,10 @@
   }
 }
 
-// O menos de remover fica à direita do cabeçalho do campo ou da seção.
-.content-form__remove {
+// Renomear e remover, lado a lado à direita do cabeçalho do campo ou da seção.
+.content-form__node-actions {
+  display: flex;
+  gap: calc(var(--spacing) * 0.5);
   margin-left: auto;
 }
 

@@ -205,11 +205,10 @@ function Nodes({ nodes, depth }: { nodes: FormNode[]; depth: number }) {
           data-path={node.path}
           open={depth === 0 || created.has(node.path)}
         >
-          {/* O nome fica como texto direto do summary; o lápis vem depois dele e o menos, à direita. */}
+          {/* O nome fica como texto direto do summary; renomear e remover, à direita. */}
           <summary className="content-form__summary">
             {node.label}
-            <RenameAction at={node.at} label={node.label} />
-            <RemoveAction at={node.at} label={node.label} />
+            <NodeActions at={node.at} label={node.label} />
           </summary>
           <div className="content-form__children">
             {length === 0 ? (
@@ -234,9 +233,8 @@ function Nodes({ nodes, depth }: { nodes: FormNode[]; depth: number }) {
       return (
         <div key={node.path} className="content-form__readonly" data-path={node.path}>
           <div className="content-form__heading">
-            <RenameAction at={node.at} label={node.label} />
             <span className="content-form__label">{node.label}</span>
-            <RemoveAction at={node.at} label={node.label} />
+            <NodeActions at={node.at} label={node.label} />
           </div>
           <p>{node.reason} Edite no JSON.</p>
           <FieldErrors messages={errors.get(node.path)} />
@@ -310,34 +308,32 @@ function GroupActions({
   )
 }
 
-// O lápis, ao lado do nome: depois do nome nas seções e antes dele nos campos. Item de array não
+// Renomear e remover, lado a lado à direita do cabeçalho do campo ou da seção. Item de array não
 // tem nome para renomear.
-function RenameAction({ at, label }: { at: Segment[]; label: string }) {
+function NodeActions({ at, label }: { at: Segment[]; label: string }) {
   const actions = useFormActions()
-  if (typeof at[at.length - 1] !== "string") return null
+  const named = typeof at[at.length - 1] === "string"
 
   return (
-    <IconAction
-      label={`Renomear ${label}`}
-      onClick={() => actions.open({ kind: "rename", at, label })}
-    >
-      <path d="M12.5 2.75L15.25 5.5L6 14.75H3.25V12L12.5 2.75Z" />
-      <path d="M10.75 4.5L13.5 7.25" />
-    </IconAction>
-  )
-}
-
-// O menos, à direita no cabeçalho do campo ou da seção.
-function RemoveAction({ at, label }: { at: Segment[]; label: string }) {
-  const actions = useFormActions()
-
-  return (
-    <span className="content-form__remove">
+    <span className="content-form__node-actions">
+      {named && (
+        <IconAction
+          label={`Renomear ${label}`}
+          onClick={() => actions.open({ kind: "rename", at, label })}
+        >
+          <path d="M12.5 2.75L15.25 5.5L6 14.75H3.25V12L12.5 2.75Z" />
+          <path d="M10.75 4.5L13.5 7.25" />
+        </IconAction>
+      )}
       <IconAction
         label={`Remover ${label}`}
         onClick={() => actions.open({ kind: "remove", at, label })}
       >
-        <path d="M3.75 9H14.25" />
+        <path d="M3 4.75H15" />
+        <path d="M7 4.75V2.75H11V4.75" />
+        <path d="M4.5 4.75L5.25 15.25H12.75L13.5 4.75" />
+        <path d="M7.5 8V12" />
+        <path d="M10.5 8V12" />
       </IconAction>
     </span>
   )
@@ -502,7 +498,6 @@ function Field({ node, messages }: { node: FieldNode; messages?: string[] }) {
   return (
     <div className="content-form__field" data-path={node.path}>
       <div className="content-form__heading">
-        <RenameAction at={node.at} label={node.label} />
         <label htmlFor={id} className="content-form__label">
           {node.label}
         </label>
@@ -518,7 +513,7 @@ function Field({ node, messages }: { node: FieldNode; messages?: string[] }) {
             </option>
           ))}
         </select>
-        <RemoveAction at={node.at} label={node.label} />
+        <NodeActions at={node.at} label={node.label} />
       </div>
       {control}
       <FieldErrors id={descriptionId} messages={description} />
