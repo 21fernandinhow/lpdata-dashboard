@@ -103,6 +103,12 @@
     flex: 1;
     min-width: 12rem;
   }
+
+  // O + fica da altura do campo.
+  .button--icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 }
 
 .publication__json {

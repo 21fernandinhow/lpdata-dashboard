@@ -9,7 +9,9 @@ import {
 } from "@/api/landing-pages"
 import { useLoad } from "@/api/use-load"
 import { CopyButton } from "@/components/CopyButton"
+import { Icon } from "@/components/Icon"
 import { Loader } from "@/components/Loader"
+import { Tooltip } from "@/components/Tooltip"
 import { useApi } from "@/session/context"
 
 const LIMITS_DOCS = "https://lpdata.io/public-content#limite-de-leituras"
@@ -143,9 +145,21 @@ function AllowedHosts({ page, onUpdated }: PublicationProps) {
             aria-describedby={hintId}
           />
         </label>
-        <button type="submit" className="button button--primary" disabled={pending}>
-          Adicionar
-        </button>
+        <Tooltip label="Adicionar host">
+          {(tooltipId) => (
+            <button
+              type="submit"
+              className="button button--ghost button--icon"
+              aria-labelledby={tooltipId}
+              disabled={pending}
+            >
+              <Icon>
+                <path d="M9 3.75V14.25" />
+                <path d="M3.75 9H14.25" />
+              </Icon>
+            </button>
+          )}
+        </Tooltip>
         <p id={hintId} className="publication__hint">
           Só o host, como example.com ou localhost:5173. Uma URL colada vira só o host.
         </p>
@@ -162,14 +176,22 @@ function PublicView({ publicId }: { publicId: number }) {
     <section className="publication__section">
       <div className="publication__heading">
         <h2 className="publication__title">O que o consumidor recebe</h2>
-        <button
-          type="button"
-          className="button button--secondary button--small"
-          onClick={reload}
-          disabled={state.status === "loading"}
-        >
-          Atualizar
-        </button>
+        <Tooltip label="Atualizar">
+          {(tooltipId) => (
+            <button
+              type="button"
+              className="button button--ghost button--icon"
+              aria-labelledby={tooltipId}
+              onClick={reload}
+              disabled={state.status === "loading"}
+            >
+              <Icon>
+                <path d="M15.75 9A6.75 6.75 0 1 1 9 2.25C10.89 2.25 12.7 3 14.06 4.31L15.75 6" />
+                <path d="M15.75 2.25V6H12" />
+              </Icon>
+            </button>
+          )}
+        </Tooltip>
       </div>
       <p className="publication__text">
         O corpo da leitura pública, como a Aplicação Consumidora o recebe. A apresentação é dela.

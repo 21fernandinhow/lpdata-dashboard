@@ -39,7 +39,7 @@ function hostsShown() {
 
 async function addHost(text: string) {
   await userEvent.type(screen.getByLabelText("Host"), text)
-  await userEvent.click(screen.getByRole("button", { name: "Adicionar" }))
+  await userEvent.click(screen.getByRole("button", { name: "Adicionar host" }))
 }
 
 function patches(id: number) {
