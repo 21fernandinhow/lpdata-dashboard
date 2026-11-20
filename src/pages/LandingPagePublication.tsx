@@ -4,10 +4,12 @@ import { hostFrom } from "@/api/hosts"
 import { publicUrl, updateAllowedHosts, type LandingPage } from "@/api/landing-pages"
 import { CopyButton } from "@/components/CopyButton"
 import { Icon } from "@/components/Icon"
+import { InfoLink } from "@/components/InfoLink"
 import { Tooltip } from "@/components/Tooltip"
 import { useApi } from "@/session/context"
 
-const LIMITS_DOCS = "https://lpdata.io/public-content#limite-de-leituras"
+const PUBLIC_CONTENT_DOCS = "https://lpdata.io/public-content"
+const HOSTS_DOCS = "https://lpdata.io/landing-pages#hosts-permitidos"
 
 type PublicationProps = { page: LandingPage; onUpdated: (page: LandingPage) => void }
 
@@ -29,24 +31,11 @@ function PublicIdentifier({ publicId }: { publicId: number }) {
     <section className="publication__section">
       <div className="publication__title-row">
         <h2 className="publication__title">URL pública</h2>
-        <Tooltip
-          label={`O identificador público é o número no fim da URL: ${publicId}. A Aplicação Consumidora pode guardar só ele e montar a URL.`}
-        >
-          {(tooltipId) => (
-            <button
-              type="button"
-              className="button button--ghost button--icon publication__info"
-              aria-label="Sobre o identificador público"
-              aria-describedby={tooltipId}
-            >
-              <Icon>
-                <circle cx="9" cy="9" r="7.25" />
-                <path d="M9 12.25V8.5" />
-                <path d="M9 5.75H9.01" />
-              </Icon>
-            </button>
-          )}
-        </Tooltip>
+        <InfoLink
+          label="Sobre a URL pública"
+          text={`O identificador público é o número no fim da URL: ${publicId}. A Aplicação Consumidora pode guardar só ele e montar a URL.`}
+          href={PUBLIC_CONTENT_DOCS}
+        />
       </div>
       <p className="publication__text">
         A Aplicação Consumidora busca o Documento de Conteúdo por esta URL.
@@ -111,17 +100,14 @@ function AllowedHosts({ page, onUpdated }: PublicationProps) {
 
   return (
     <section className="publication__section">
-      <h2 className="publication__title">Hosts permitidos</h2>
-      <p className="publication__text">
-        A leitura pública funciona de qualquer origem: estes hosts não liberam nem bloqueiam o
-        acesso. Leituras feitas pelo navegador a partir deles têm um limite de leituras maior. Um
-        host sem porta vale também para os subdomínios; com porta, exige host e porta exatos.
-      </p>
-      <p className="publication__text">
-        <a href={LIMITS_DOCS} target="_blank" rel="noreferrer">
-          Ver os limites na documentação
-        </a>
-      </p>
+      <div className="publication__title-row">
+        <h2 className="publication__title">Hosts permitidos</h2>
+        <InfoLink
+          label="Sobre os hosts permitidos"
+          text="A leitura pública funciona de qualquer origem: estes hosts não liberam nem bloqueiam o acesso. Leituras feitas pelo navegador a partir deles têm um limite de leituras maior. Sem porta, o host vale também para os subdomínios; com porta, exige host e porta exatos."
+          href={HOSTS_DOCS}
+        />
+      </div>
 
       {error && (
         <p className="publication__error" role="alert">

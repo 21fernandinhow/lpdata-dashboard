@@ -90,12 +90,15 @@ describe("URL pública", () => {
     expect(screen.getByRole("button", { name: "Copiado" })).toBeInTheDocument()
   })
 
-  it("o ícone de informação explica que o identificador é o fim da URL", async () => {
+  it("a informação explica o identificador e abre a documentação", async () => {
     const page = await openPublication()
 
-    expect(
-      screen.getByRole("button", { name: "Sobre o identificador público" }),
-    ).toHaveAccessibleDescription(new RegExp(`fim da URL: ${page.public_id}\\.`))
+    const info = screen.getByRole("link", { name: "Sobre a URL pública" })
+
+    expect(info).toHaveAccessibleDescription(new RegExp(`fim da URL: ${page.public_id}\\.`))
+    expect(info).toHaveAccessibleDescription(/Clique para ver na documentação\.$/)
+    expect(info).toHaveAttribute("href", "https://lpdata.io/public-content")
+    expect(info).toHaveAttribute("target", "_blank")
   })
 })
 
@@ -157,10 +160,14 @@ describe("hosts permitidos", () => {
     expect(patches(page.id)).toHaveLength(1)
   })
 
-  it("explica que os hosts mudam o limite de leituras, não quem pode ler", async () => {
+  it("a informação explica que os hosts mudam o limite, não quem lê, e abre a documentação", async () => {
     await openPublication()
 
-    expect(screen.getByText(/qualquer origem/)).toBeInTheDocument()
-    expect(screen.getByText(/limite de leituras/)).toBeInTheDocument()
+    const info = screen.getByRole("link", { name: "Sobre os hosts permitidos" })
+
+    expect(info).toHaveAccessibleDescription(/qualquer origem/)
+    expect(info).toHaveAccessibleDescription(/limite de leituras maior/)
+    expect(info).toHaveAccessibleDescription(/Clique para ver na documentação\.$/)
+    expect(info).toHaveAttribute("href", "https://lpdata.io/landing-pages#hosts-permitidos")
   })
 })
