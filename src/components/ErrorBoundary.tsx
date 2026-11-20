@@ -1,4 +1,5 @@
-import { Component, type ErrorInfo, type ReactNode } from "react"
+import { Component, useEffect, type ErrorInfo, type ReactNode } from "react"
+import { useRouteError } from "react-router-dom"
 import { ErrorState } from "@/components/ErrorState"
 
 type ErrorBoundaryProps = { children: ReactNode }
@@ -17,14 +18,25 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   render() {
     if (this.state.hasError) {
-      return (
-        <ErrorState
-          title="Algo deu errado"
-          message="O dashboard encontrou um erro inesperado. Recarregue a página para tentar de novo."
-          action={{ label: "Recarregar a página", onClick: () => window.location.reload() }}
-        />
-      )
+      return <UnexpectedError />
     }
     return this.props.children
   }
+}
+
+// O mesmo aviso para os erros que o data router captura dentro das rotas.
+export function RouteError() {
+  const error = useRouteError()
+  useEffect(() => console.error(error), [error])
+  return <UnexpectedError />
+}
+
+function UnexpectedError() {
+  return (
+    <ErrorState
+      title="Algo deu errado"
+      message="O dashboard encontrou um erro inesperado. Recarregue a página para tentar de novo."
+      action={{ label: "Recarregar a página", onClick: () => window.location.reload() }}
+    />
+  )
 }

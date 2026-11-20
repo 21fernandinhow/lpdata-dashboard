@@ -1,0 +1,123 @@
+// Editor de JSON: textarea transparente sobre a camada de destaque. Os dois precisam da mesma
+// fonte, do mesmo tamanho, da mesma altura de linha e do mesmo espaçamento, ou o texto
+// colorido se desalinha do cursor. Nada de negrito nem itálico nos pedaços: mudam a largura.
+
+.json-editor {
+  --json-line-height: 1.25rem;
+  --json-padding: calc(var(--spacing) * 3);
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+  height: min(70vh, 36rem);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: var(--json-line-height);
+
+  &:focus-within {
+    border-color: var(--color-accent);
+  }
+}
+
+.json-editor__gutter {
+  overflow: hidden;
+  padding-block: var(--json-padding);
+  border-right: 1px solid var(--color-border);
+  color: var(--color-icon);
+  text-align: right;
+  user-select: none;
+}
+
+.json-editor__number {
+  height: var(--json-line-height);
+  padding-inline: calc(var(--spacing) * 3) calc(var(--spacing) * 2);
+}
+
+.json-editor__number--marked {
+  color: var(--color-heading);
+}
+
+.json-editor__body {
+  position: relative;
+  min-width: 0;
+}
+
+.json-editor__highlight,
+.json-editor__input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: var(--json-padding);
+  font: inherit;
+  line-height: inherit;
+  white-space: pre;
+  tab-size: 2;
+}
+
+.json-editor__highlight {
+  overflow: hidden;
+  padding: 0;
+  pointer-events: none;
+}
+
+// A folga no fim deixa a camada rolar tanto quanto o textarea, mesmo com barra de rolagem.
+.json-editor__lines {
+  width: max-content;
+  min-width: 100%;
+  padding-bottom: 4rem;
+}
+
+.json-editor__highlight .json-editor__lines {
+  padding: var(--json-padding) 4rem 4rem var(--json-padding);
+}
+
+.json-editor__line {
+  height: var(--json-line-height);
+}
+
+.json-editor__line--marked {
+  margin-inline: calc(var(--json-padding) * -1);
+  padding-inline: var(--json-padding);
+  background-color: var(--color-selection);
+}
+
+.json-editor__input {
+  overflow: auto;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--color-heading);
+  resize: none;
+
+  &::selection {
+    background-color: var(--color-selection);
+    color: transparent;
+  }
+}
+
+.json-token--key {
+  color: var(--color-heading);
+}
+
+.json-token--string {
+  color: var(--color-accent);
+}
+
+.json-token--number,
+.json-token--literal {
+  color: var(--color-muted);
+}
+
+.json-token--punctuation,
+.json-token--whitespace {
+  color: var(--color-icon);
+}
+
+.json-token--invalid {
+  color: var(--color-heading);
+  text-decoration: underline wavy var(--color-accent);
+}

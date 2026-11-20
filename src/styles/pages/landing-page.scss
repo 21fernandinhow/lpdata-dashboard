@@ -1,6 +1,6 @@
 @use "../utils/responsivity" as *;
 
-// Uma landing page aberta. O conteúdo chega com o Modo Raw (#14).
+// Uma landing page aberta: o Modo Raw na aba Conteúdo e a aba Publicação.
 
 .landing-page {
   width: 100%;
@@ -36,12 +36,4 @@
 .landing-page__actions {
   display: flex;
   gap: calc(var(--spacing) * 1);
-}
-
-.landing-page__placeholder {
-  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 4);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-xl);
-  color: var(--color-muted);
-  text-align: center;
 }

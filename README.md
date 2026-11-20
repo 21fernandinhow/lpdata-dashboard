@@ -6,7 +6,7 @@ O LPData é uma aplicação exclusivamente API e não tem frontend próprio. Est
 
 ## Estado
 
-Em desenvolvimento. A fundação (#10), a sessão (#11), as landing pages (#12) e a publicação (#13) estão prontas: cadastro, login, logout, renovação automática da sessão; listar, criar, renomear e apagar landing pages; URL pública e hosts permitidos. A edição do Documento de Conteúdo chega na #14. As decisões estruturais estão registradas em [docs/adr/](docs/adr/) e a sequência de desenvolvimento está dividida nas issues deste repositório, com a ordem na #18.
+Em desenvolvimento. A fundação (#10), a sessão (#11), as landing pages (#12), a publicação (#13) e o Modo Raw (#14) estão prontos: cadastro, login, logout, renovação automática da sessão; listar, criar, renomear e apagar landing pages; URL pública e hosts permitidos; editar e gravar o Documento de Conteúdo como JSON. O Modo Formulário chega na #15. As decisões estruturais estão registradas em [docs/adr/](docs/adr/) e a sequência de desenvolvimento está dividida nas issues deste repositório, com a ordem na #18.
 
 ## Stack
 

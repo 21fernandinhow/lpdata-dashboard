@@ -1,28 +1,42 @@
-import { lazy } from "react"
-import { Route, Routes } from "react-router-dom"
+import { createBrowserRouter, type RouteObject } from "react-router-dom"
 import { AppShell } from "@/components/AppShell"
+import { RouteError } from "@/components/ErrorBoundary"
+import {
+  LandingPagePage,
+  LandingPagesPage,
+  LoginPage,
+  NotFoundPage,
+  SignupPage,
+} from "@/pages/lazy-pages"
 import { GuestOnly, RequireSession } from "@/session/guards"
 
-const LandingPagesPage = lazy(() => import("@/pages/LandingPagesPage"))
-const LandingPagePage = lazy(() => import("@/pages/LandingPagePage"))
-const LoginPage = lazy(() => import("@/pages/LoginPage"))
-const SignupPage = lazy(() => import("@/pages/SignupPage"))
-const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"))
+const routes: RouteObject[] = [
+  {
+    element: <AppShell />,
+    // O data router captura os erros de renderização antes do ErrorBoundary de fora.
+    errorElement: <RouteError />,
+    children: [
+      {
+        element: <RequireSession />,
+        children: [
+          { index: true, element: <LandingPagesPage /> },
+          { path: "landing-pages/:id", element: <LandingPagePage /> },
+        ],
+      },
+      {
+        element: <GuestOnly />,
+        children: [
+          { path: "login", element: <LoginPage /> },
+          { path: "signup", element: <SignupPage /> },
+        ],
+      },
+      { path: "*", element: <NotFoundPage /> },
+    ],
+  },
+]
 
-export function AppRoutes() {
-  return (
-    <Routes>
-      <Route element={<AppShell />}>
-        <Route element={<RequireSession />}>
-          <Route index element={<LandingPagesPage />} />
-          <Route path="landing-pages/:id" element={<LandingPagePage />} />
-        </Route>
-        <Route element={<GuestOnly />}>
-          <Route path="login" element={<LoginPage />} />
-          <Route path="signup" element={<SignupPage />} />
-        </Route>
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
-  )
+// Data router, e não BrowserRouter: o aviso de alteração não salva usa useBlocker, que só
+// existe nele.
+export function createAppRouter() {
+  return createBrowserRouter(routes)
 }

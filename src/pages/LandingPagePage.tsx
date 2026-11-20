@@ -1,4 +1,5 @@
-import { useCallback, useRef } from "react"
+import { useCallback, useRef, useState } from "react"
+import { flushSync } from "react-dom"
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { isNotFound, userMessage } from "@/api/errors"
 import {
@@ -13,7 +14,10 @@ import { FormDialog } from "@/components/FormDialog"
 import { Icon } from "@/components/Icon"
 import { Loader } from "@/components/Loader"
 import { Tooltip } from "@/components/Tooltip"
+import { UnsavedChangesGuard } from "@/components/UnsavedChangesGuard"
+import { formatDocument } from "@/content/json-source"
 import { LandingPagePublication } from "@/pages/LandingPagePublication"
+import { LandingPageRawMode } from "@/pages/LandingPageRawMode"
 import { useApi } from "@/session/context"
 
 // A aba aberta fica no endereço, para sobreviver ao recarregamento e ao histórico.
@@ -65,6 +69,17 @@ function LandingPageView({ page, onUpdated }: LandingPageViewProps) {
   const onPublication = searchParams.get(TAB_PARAM) === PUBLICATION_TAB
   const renameDialog = useRef<HTMLDialogElement>(null)
   const deleteDialog = useRef<HTMLDialogElement>(null)
+  // O Documento em Edição fica aqui, e não no Modo Raw, para sobreviver à troca de aba. Ele é
+  // comparado ao último texto gravado para saber se há alteração pendente.
+  const [savedText, setSavedText] = useState(() => formatDocument(page.current_data))
+  const [draft, setDraft] = useState(savedText)
+  const [deleted, setDeleted] = useState(false)
+  const dirty = draft !== savedText && !deleted
+
+  function handleSaved(updated: LandingPage, text: string) {
+    setSavedText(text)
+    onUpdated(updated)
+  }
 
   async function rename(form: FormData) {
     onUpdated(await renameLandingPage(api, page.id, String(form.get("name"))))
@@ -73,6 +88,9 @@ function LandingPageView({ page, onUpdated }: LandingPageViewProps) {
   // Sem replace, voltar no histórico abriria a landing page apagada.
   async function remove() {
     await deleteLandingPage(api, page.id)
+    // Apagada, a landing page não tem mais o que perder: a saída não pede confirmação. O
+    // flushSync garante que o aviso já saiba disso quando a navegação acontecer.
+    flushSync(() => setDeleted(true))
     navigate("/", { replace: true })
   }
 
@@ -147,8 +165,16 @@ function LandingPageView({ page, onUpdated }: LandingPageViewProps) {
       {onPublication ? (
         <LandingPagePublication page={page} onUpdated={onUpdated} />
       ) : (
-        <p className="landing-page__placeholder">A edição do Documento de Conteúdo chega na #14.</p>
+        <LandingPageRawMode
+          page={page}
+          draft={draft}
+          onDraftChange={setDraft}
+          dirty={dirty}
+          onSaved={handleSaved}
+        />
       )}
+
+      <UnsavedChangesGuard when={dirty} />
 
       <FormDialog
         ref={renameDialog}

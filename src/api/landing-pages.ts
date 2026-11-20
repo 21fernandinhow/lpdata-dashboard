@@ -58,3 +58,11 @@ export async function updateAllowedHosts(api: AxiosInstance, id: number, hosts: 
 export function publicUrl(publicId: number) {
   return `${env.apiUrl}/landing_pages/${publicId}`
 }
+
+// O documento vai sempre inteiro: a API substitui o current_data, sem mesclar (ADR 0005).
+export async function saveDocument(api: AxiosInstance, id: number, document: unknown) {
+  const { data } = await api.patch<{ landing_page: LandingPage }>(`/manage/landing_pages/${id}`, {
+    landing_page: { current_data: document },
+  })
+  return data.landing_page
+}
