@@ -33,7 +33,9 @@
   margin-bottom: calc(var(--spacing) * 4);
 }
 
-// O botão ghost alinha o ícone com a borda do conteúdo, como o Voltar da landing page.
+// O botão ghost alinha o ícone com a borda do conteúdo. Com menos espaço à esquerda, ele passa
+// pouco da margem: só o bastante para o fundo do hover não colar no ícone.
 .home-actions > .button--ghost:first-child {
-  margin-inline-start: calc(var(--spacing) * -4);
+  margin-inline-start: calc(var(--spacing) * -2);
+  padding-inline-start: calc(var(--spacing) * 2);
 }
