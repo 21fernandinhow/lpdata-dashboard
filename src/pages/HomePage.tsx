@@ -1,12 +1,20 @@
+import { useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { ASSETS_TAB, HOME_TAB_PARAM } from "@/components/HomeTabs"
 import { AssetsPage, LandingPagesPage } from "@/pages/lazy-pages"
 
 const DASHBOARD_DOCS = "https://lpdata.io/dashboard"
 
-// A página inicial: uma intro e, pela aba no endereço, as landing pages ou os assets da conta.
+type Tab = "pages" | "files"
+
+// A página inicial: uma intro e, pela aba no endereço, as páginas ou os arquivos da conta.
 export default function HomePage() {
   const [searchParams] = useSearchParams()
+  const tab: Tab = searchParams.get(HOME_TAB_PARAM) === ASSETS_TAB ? "files" : "pages"
+  // Uma aba carrega na primeira vez que abre e depois fica montada, só escondida: trocar de aba
+  // não repete a requisição. Sair da página inicial descarta as duas, e voltar recarrega.
+  const [opened, setOpened] = useState<ReadonlySet<Tab>>(() => new Set([tab]))
+  if (!opened.has(tab)) setOpened(new Set(opened).add(tab))
 
   return (
     <div className="home">
@@ -20,7 +28,16 @@ export default function HomePage() {
           </a>
         </p>
       </header>
-      {searchParams.get(HOME_TAB_PARAM) === ASSETS_TAB ? <AssetsPage /> : <LandingPagesPage />}
+      {opened.has("pages") && (
+        <div hidden={tab !== "pages"}>
+          <LandingPagesPage />
+        </div>
+      )}
+      {opened.has("files") && (
+        <div hidden={tab !== "files"}>
+          <AssetsPage />
+        </div>
+      )}
     </div>
   )
 }

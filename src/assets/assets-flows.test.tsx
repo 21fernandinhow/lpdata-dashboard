@@ -24,13 +24,13 @@ function signedIn() {
   localStorage.setItem(REFRESH_TOKEN_KEY, fakeApi.openSession(EMAIL))
 }
 
-async function openAssets(path = "/?aba=assets") {
+async function openAssets(path = "/?aba=arquivos") {
   renderApp(path)
-  await screen.findByRole("heading", { level: 2, name: "Assets" })
+  await screen.findByRole("heading", { level: 2, name: "Arquivos" })
 }
 
 function assetsList() {
-  return screen.getByRole("list", { name: "Assets" })
+  return screen.getByRole("list", { name: "Arquivos" })
 }
 
 function fileInput() {
@@ -43,37 +43,55 @@ describe("abas da página inicial", () => {
     renderApp("/")
     const tabs = await screen.findByRole("navigation", { name: "Seções do dashboard" })
 
-    expect(within(tabs).getByRole("link", { name: "Landing pages" })).toHaveAttribute(
+    expect(within(tabs).getByRole("link", { name: "Páginas" })).toHaveAttribute(
       "aria-current",
       "page",
     )
-    await userEvent.click(within(tabs).getByRole("link", { name: "Assets" }))
+    await userEvent.click(within(tabs).getByRole("link", { name: "Arquivos" }))
 
-    expect(await screen.findByRole("heading", { level: 2, name: "Assets" })).toBeInTheDocument()
-    expect(window.location.search).toBe("?aba=assets")
+    expect(await screen.findByRole("heading", { level: 2, name: "Arquivos" })).toBeInTheDocument()
+    expect(window.location.search).toBe("?aba=arquivos")
     const assetTabs = screen.getByRole("navigation", { name: "Seções do dashboard" })
-    expect(within(assetTabs).getByRole("link", { name: "Assets" })).toHaveAttribute(
+    expect(within(assetTabs).getByRole("link", { name: "Arquivos" })).toHaveAttribute(
       "aria-current",
       "page",
     )
 
-    await userEvent.click(within(assetTabs).getByRole("link", { name: "Landing pages" }))
+    await userEvent.click(within(assetTabs).getByRole("link", { name: "Páginas" }))
 
-    expect(
-      await screen.findByRole("heading", { level: 2, name: "Landing pages" }),
-    ).toBeInTheDocument()
+    expect(await screen.findByRole("heading", { level: 2, name: "Páginas" })).toBeInTheDocument()
     expect(window.location.search).toBe("")
   })
 
   it("a página inicial tem uma intro, com título e link para a documentação", async () => {
     signedIn()
-    renderApp("/?aba=assets")
+    renderApp("/?aba=arquivos")
 
     expect(await screen.findByRole("heading", { level: 1, name: "Seu conteúdo" })).toBeVisible()
     expect(screen.getByRole("link", { name: "Como usar o Dashboard" })).toHaveAttribute(
       "href",
       "https://lpdata.io/dashboard",
     )
+  })
+
+  it("trocar de aba não repete a requisição da lista", async () => {
+    signedIn()
+    renderApp("/")
+    await screen.findByRole("heading", { level: 2, name: "Páginas" })
+    // Cada aba tem a própria barra; a da aba escondida some junto com ela.
+    const tab = (name: string) =>
+      within(screen.getByRole("navigation", { name: "Seções do dashboard" })).getByRole("link", {
+        name,
+      })
+
+    await userEvent.click(tab("Arquivos"))
+    await screen.findByText("Você ainda não enviou arquivos.")
+    await userEvent.click(tab("Páginas"))
+    await userEvent.click(tab("Arquivos"))
+
+    expect(screen.getByText("Você ainda não enviou arquivos.")).toBeVisible()
+    expect(fakeApi.requests("GET", "/manage/landing_pages")).toHaveLength(1)
+    expect(fakeApi.requests("GET", "/assets")).toHaveLength(1)
   })
 
   it("o cabeçalho não tem mais links de navegação", async () => {
@@ -117,7 +135,7 @@ describe("lista de assets", () => {
     expect(screen.getByRole("link", { name: "Grade" })).toHaveAttribute("aria-current", "page")
     await userEvent.click(screen.getByRole("link", { name: "Lista" }))
 
-    expect(window.location.search).toBe("?aba=assets&visao=lista")
+    expect(window.location.search).toBe("?aba=arquivos&visao=lista")
     expect(screen.getByRole("link", { name: "Lista" })).toHaveAttribute("aria-current", "page")
     expect(within(assetsList()).getByText("hero.webp")).toBeInTheDocument()
   })
@@ -133,7 +151,7 @@ describe("lista de assets", () => {
     signedIn()
     fakeApi.createAsset(EMAIL, "hero.webp", "image/webp", 18432)
     fakeApi.server.use(http.get(url("/assets"), () => HttpResponse.error(), { once: true }))
-    renderApp("/?aba=assets")
+    renderApp("/?aba=arquivos")
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Sem conexão com a API. Confira sua internet.",
@@ -161,7 +179,7 @@ describe("enviar", () => {
 
     await userEvent.upload(fileInput(), new File(["conteúdo"], "hero.webp", { type: "image/webp" }))
 
-    const list = await screen.findByRole("list", { name: "Assets" })
+    const list = await screen.findByRole("list", { name: "Arquivos" })
     expect(within(list).getByText("hero.webp")).toBeInTheDocument()
     const [created] = fakeApi.assets()
     expect(created).toMatchObject({ filename: "hero.webp", content_type: "image/webp" })

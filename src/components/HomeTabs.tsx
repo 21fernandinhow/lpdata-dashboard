@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom"
 
-// A aba aberta da página inicial fica no endereço: ?aba=assets. Sem ela, Landing pages.
+// A aba aberta da página inicial fica no endereço: ?aba=arquivos. Sem ela, Páginas.
 export const HOME_TAB_PARAM = "aba"
-export const ASSETS_TAB = "assets"
+export const ASSETS_TAB = "arquivos"
 
 // As abas da página inicial. Cada lista põe as próprias ferramentas na mesma linha, à direita.
 export function HomeTabs({ current }: { current: "landing-pages" | "assets" }) {
@@ -13,14 +13,14 @@ export function HomeTabs({ current }: { current: "landing-pages" | "assets" }) {
         className="tabs__tab"
         aria-current={current === "landing-pages" ? "page" : undefined}
       >
-        Landing pages
+        Páginas
       </Link>
       <Link
         to={{ pathname: "/", search: `?${HOME_TAB_PARAM}=${ASSETS_TAB}` }}
         className="tabs__tab"
         aria-current={current === "assets" ? "page" : undefined}
       >
-        Assets
+        Arquivos
       </Link>
     </nav>
   )

@@ -19,7 +19,7 @@ afterAll(() => fakeApi.server.close())
 
 // A rota protegida inicial é a lista de landing pages.
 function findLandingPages() {
-  return screen.findByRole("heading", { level: 2, name: "Landing pages" })
+  return screen.findByRole("heading", { level: 2, name: "Páginas" })
 }
 
 async function signIn(email: string, password: string) {

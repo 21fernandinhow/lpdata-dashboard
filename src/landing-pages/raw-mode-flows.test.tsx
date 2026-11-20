@@ -178,9 +178,7 @@ describe("sair com alteração pendente", () => {
       }),
     )
 
-    expect(
-      await screen.findByRole("heading", { level: 2, name: "Landing pages" }),
-    ).toBeInTheDocument()
+    expect(await screen.findByRole("heading", { level: 2, name: "Páginas" })).toBeInTheDocument()
     expect(patches(page.id)).toHaveLength(0)
   })
 
@@ -189,9 +187,7 @@ describe("sair com alteração pendente", () => {
 
     await userEvent.click(screen.getByRole("link", { name: "Voltar" }))
 
-    expect(
-      await screen.findByRole("heading", { level: 2, name: "Landing pages" }),
-    ).toBeInTheDocument()
+    expect(await screen.findByRole("heading", { level: 2, name: "Páginas" })).toBeInTheDocument()
   })
 
   it("recarregar ou fechar a aba avisa só com alteração pendente", async () => {

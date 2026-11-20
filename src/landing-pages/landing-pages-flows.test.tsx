@@ -37,7 +37,7 @@ describe("lista de landing pages", () => {
     fakeApi.createLandingPage(EMAIL, "Lançamento")
     fakeApi.createLandingPage(EMAIL, "Black Friday")
 
-    const list = await screen.findByRole("list", { name: "Landing pages" })
+    const list = await screen.findByRole("list", { name: "Páginas" })
 
     const names = within(list)
       .getAllByRole("link")

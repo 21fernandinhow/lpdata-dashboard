@@ -78,7 +78,7 @@ export default function AssetsPage() {
   return (
     <section className="assets">
       <header className="home-bar">
-        <h2 className="visually-hidden">Assets</h2>
+        <h2 className="visually-hidden">Arquivos</h2>
         <HomeTabs current="assets" />
         <div className="home-bar__tools">
           <Tooltip label="Enviar arquivo">
@@ -151,7 +151,7 @@ export default function AssetsPage() {
       ) : (
         <ul
           className={asList ? "assets__list assets__list--rows" : "assets__list assets__list--grid"}
-          aria-label="Assets"
+          aria-label="Arquivos"
         >
           {assets.map((asset) => (
             <AssetItem

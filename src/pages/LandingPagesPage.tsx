@@ -46,7 +46,7 @@ export default function LandingPagesPage() {
   return (
     <section className="landing-pages">
       <header className="home-bar">
-        <h2 className="visually-hidden">Landing pages</h2>
+        <h2 className="visually-hidden">Páginas</h2>
         <HomeTabs current="landing-pages" />
         <Tooltip label="Nova landing page">
           {(tooltipId) => (
@@ -68,7 +68,7 @@ export default function LandingPagesPage() {
       {pages.length === 0 ? (
         <p className="landing-pages__empty">Você ainda não tem landing pages.</p>
       ) : (
-        <ul className="landing-pages__list" aria-label="Landing pages">
+        <ul className="landing-pages__list" aria-label="Páginas">
           {pages.map((page) => (
             <li key={page.id} className="landing-pages__item">
               <Link to={`/landing-pages/${page.id}`} className="landing-pages__link">
