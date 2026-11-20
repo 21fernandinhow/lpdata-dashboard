@@ -26,7 +26,7 @@ function signedIn() {
 
 async function openAssets(path = "/?aba=assets") {
   renderApp(path)
-  await screen.findByRole("heading", { level: 1, name: "Assets" })
+  await screen.findByRole("heading", { level: 2, name: "Assets" })
 }
 
 function assetsList() {
@@ -49,7 +49,7 @@ describe("abas da página inicial", () => {
     )
     await userEvent.click(within(tabs).getByRole("link", { name: "Assets" }))
 
-    expect(await screen.findByRole("heading", { level: 1, name: "Assets" })).toBeInTheDocument()
+    expect(await screen.findByRole("heading", { level: 2, name: "Assets" })).toBeInTheDocument()
     expect(window.location.search).toBe("?aba=assets")
     const assetTabs = screen.getByRole("navigation", { name: "Seções do dashboard" })
     expect(within(assetTabs).getByRole("link", { name: "Assets" })).toHaveAttribute(
@@ -60,9 +60,20 @@ describe("abas da página inicial", () => {
     await userEvent.click(within(assetTabs).getByRole("link", { name: "Landing pages" }))
 
     expect(
-      await screen.findByRole("heading", { level: 1, name: "Landing pages" }),
+      await screen.findByRole("heading", { level: 2, name: "Landing pages" }),
     ).toBeInTheDocument()
     expect(window.location.search).toBe("")
+  })
+
+  it("a página inicial tem uma intro, com título e link para a documentação", async () => {
+    signedIn()
+    renderApp("/?aba=assets")
+
+    expect(await screen.findByRole("heading", { level: 1, name: "Seu conteúdo" })).toBeVisible()
+    expect(screen.getByRole("link", { name: "Como usar o Dashboard" })).toHaveAttribute(
+      "href",
+      "https://lpdata.io/dashboard",
+    )
   })
 
   it("o cabeçalho não tem mais links de navegação", async () => {

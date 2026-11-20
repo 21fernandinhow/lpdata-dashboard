@@ -46,7 +46,7 @@ export default function LandingPagesPage() {
   return (
     <section className="landing-pages">
       <header className="home-bar">
-        <h1 className="visually-hidden">Landing pages</h1>
+        <h2 className="visually-hidden">Landing pages</h2>
         <HomeTabs current="landing-pages" />
         <Tooltip label="Nova landing page">
           {(tooltipId) => (

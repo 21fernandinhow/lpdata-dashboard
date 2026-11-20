@@ -1,13 +1,6 @@
 @use "../utils/responsivity" as *;
 
-// A lista de landing pages, na rota inicial.
-
-.landing-pages {
-  width: 100%;
-  max-width: 48rem;
-  margin-inline: auto;
-  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 4);
-}
+// A aba Landing pages da página inicial.
 
 .landing-pages__empty {
   padding: calc(var(--spacing) * 10) calc(var(--spacing) * 4);

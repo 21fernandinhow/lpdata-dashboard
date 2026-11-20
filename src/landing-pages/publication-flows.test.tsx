@@ -70,7 +70,7 @@ describe("abas", () => {
     await userEvent.click(screen.getByRole("link", { name: "Voltar" }))
 
     expect(
-      await screen.findByRole("heading", { level: 1, name: "Landing pages" }),
+      await screen.findByRole("heading", { level: 2, name: "Landing pages" }),
     ).toBeInTheDocument()
   })
 })

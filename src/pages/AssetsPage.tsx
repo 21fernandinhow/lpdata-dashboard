@@ -78,25 +78,9 @@ export default function AssetsPage() {
   return (
     <section className="assets">
       <header className="home-bar">
-        <h1 className="visually-hidden">Assets</h1>
+        <h2 className="visually-hidden">Assets</h2>
         <HomeTabs current="assets" />
         <div className="home-bar__tools">
-          <nav className="segmented" aria-label="Visão">
-            <Link
-              to={{ search: `?${HOME_TAB_PARAM}=${ASSETS_TAB}` }}
-              className="segmented__option"
-              aria-current={asList ? undefined : "page"}
-            >
-              Grade
-            </Link>
-            <Link
-              to={{ search: `?${HOME_TAB_PARAM}=${ASSETS_TAB}&${VIEW_PARAM}=${LIST_VIEW}` }}
-              className="segmented__option"
-              aria-current={asList ? "page" : undefined}
-            >
-              Lista
-            </Link>
-          </nav>
           <Tooltip label="Enviar arquivo">
             {(tooltipId) => (
               <button
@@ -124,6 +108,26 @@ export default function AssetsPage() {
           />
         </div>
       </header>
+
+      {/* A visão fica entre a barra das abas e o conteúdo. */}
+      <div className="assets__view">
+        <nav className="segmented" aria-label="Visão">
+          <Link
+            to={{ search: `?${HOME_TAB_PARAM}=${ASSETS_TAB}` }}
+            className="segmented__option"
+            aria-current={asList ? undefined : "page"}
+          >
+            Grade
+          </Link>
+          <Link
+            to={{ search: `?${HOME_TAB_PARAM}=${ASSETS_TAB}&${VIEW_PARAM}=${LIST_VIEW}` }}
+            className="segmented__option"
+            aria-current={asList ? "page" : undefined}
+          >
+            Lista
+          </Link>
+        </nav>
+      </div>
 
       {upload && (
         <div className="assets__upload" role="status">

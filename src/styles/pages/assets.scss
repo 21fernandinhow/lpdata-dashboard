@@ -1,12 +1,11 @@
 @use "../utils/responsivity" as *;
 
-// Os arquivos da conta, em grade ou em linhas.
+// A aba Assets da página inicial: os arquivos da conta, em grade ou em linhas.
 
-.assets {
-  width: 100%;
-  max-width: 64rem;
-  margin-inline: auto;
-  padding: calc(var(--spacing) * 10) calc(var(--spacing) * 4);
+.assets__view {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: calc(var(--spacing) * 4);
 }
 
 .assets__upload {

@@ -179,7 +179,7 @@ describe("sair com alteração pendente", () => {
     )
 
     expect(
-      await screen.findByRole("heading", { level: 1, name: "Landing pages" }),
+      await screen.findByRole("heading", { level: 2, name: "Landing pages" }),
     ).toBeInTheDocument()
     expect(patches(page.id)).toHaveLength(0)
   })
@@ -190,7 +190,7 @@ describe("sair com alteração pendente", () => {
     await userEvent.click(screen.getByRole("link", { name: "Voltar" }))
 
     expect(
-      await screen.findByRole("heading", { level: 1, name: "Landing pages" }),
+      await screen.findByRole("heading", { level: 2, name: "Landing pages" }),
     ).toBeInTheDocument()
   })
 
