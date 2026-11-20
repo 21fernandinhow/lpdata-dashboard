@@ -5,7 +5,9 @@ import { createLandingPage, listLandingPages, type LandingPage } from "@/api/lan
 import { useLoad } from "@/api/use-load"
 import { ErrorState } from "@/components/ErrorState"
 import { FormDialog } from "@/components/FormDialog"
+import { Icon } from "@/components/Icon"
 import { Loader } from "@/components/Loader"
+import { Tooltip } from "@/components/Tooltip"
 import { useApi } from "@/session/context"
 
 const updatedAt = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" })
@@ -44,13 +46,21 @@ export default function LandingPagesPage() {
     <section className="landing-pages">
       <header className="landing-pages__header">
         <h1 className="landing-pages__title">Landing pages</h1>
-        <button
-          type="button"
-          className="button button--primary"
-          onClick={() => createDialog.current?.showModal()}
-        >
-          Nova landing page
-        </button>
+        <Tooltip label="Nova landing page">
+          {(tooltipId) => (
+            <button
+              type="button"
+              className="button button--ghost button--icon"
+              aria-labelledby={tooltipId}
+              onClick={() => createDialog.current?.showModal()}
+            >
+              <Icon>
+                <path d="M9 3.75V14.25" />
+                <path d="M3.75 9H14.25" />
+              </Icon>
+            </button>
+          )}
+        </Tooltip>
       </header>
 
       {pages.length === 0 ? (

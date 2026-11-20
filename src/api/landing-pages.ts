@@ -1,4 +1,6 @@
 import type { AxiosInstance } from "axios"
+import { createHttpClient } from "@/api/http"
+import { env } from "@/env"
 
 // A landing page como a API a serializa nas rotas de gerenciamento.
 export type LandingPage = {
@@ -45,4 +47,23 @@ export async function renameLandingPage(api: AxiosInstance, id: number, name: st
 
 export async function deleteLandingPage(api: AxiosInstance, id: number) {
   await api.delete(`/manage/landing_pages/${id}`)
+}
+
+export async function updateAllowedHosts(api: AxiosInstance, id: number, hosts: string[]) {
+  const { data } = await api.patch<{ landing_page: LandingPage }>(`/manage/landing_pages/${id}`, {
+    landing_page: { allowed_hosts: hosts },
+  })
+  return data.landing_page
+}
+
+// A leitura pública vai sem token, como a Aplicação Consumidora a faz.
+const publicHttp = createHttpClient()
+
+export async function getPublicContent(publicId: number, signal?: AbortSignal) {
+  const { data } = await publicHttp.get<unknown>(`/landing_pages/${publicId}`, { signal })
+  return data
+}
+
+export function publicUrl(publicId: number) {
+  return `${env.apiUrl}/landing_pages/${publicId}`
 }

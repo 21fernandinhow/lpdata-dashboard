@@ -25,6 +25,30 @@
   }
 }
 
+// Sem borda nem fundo: só o conteúdo, com fundo leve no hover.
+.button--ghost {
+  border: 0;
+  background: none;
+  color: var(--color-icon);
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-hover);
+    color: var(--color-icon-hover);
+  }
+}
+
+.button--small {
+  height: 1.875rem;
+  padding-inline: calc(var(--spacing) * 3);
+  font-size: var(--text-xs);
+}
+
+// Botão só com ícone. O nome vem do Tooltip, por aria-labelledby.
+.button--icon {
+  width: 2.25rem;
+  padding: 0;
+}
+
 .button--primary {
   border: 0;
   background-color: var(--color-heading);

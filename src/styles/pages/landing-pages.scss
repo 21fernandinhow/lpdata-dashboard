@@ -35,13 +35,13 @@
 }
 
 .landing-pages__list {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 3);
   list-style: none;
-  overflow: hidden;
 }
 
-// A linha inteira é clicável: o ::after do link cobre o item.
+// Cada landing page é um box independente, todo clicável: o ::after do link cobre o item.
 .landing-pages__item {
   position: relative;
   display: flex;
@@ -50,19 +50,19 @@
   justify-content: space-between;
   gap: calc(var(--spacing) * 1) calc(var(--spacing) * 4);
   padding: calc(var(--spacing) * 4);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  transition: border-color 150ms;
 
-  & + & {
-    border-top: 1px solid var(--color-border);
-  }
-
-  &:hover {
-    background-color: var(--color-hover);
+  &:hover,
+  &:focus-within {
+    border-color: var(--color-accent);
   }
 }
 
 .landing-pages__link {
   color: var(--color-heading);
-  font-weight: 500;
+  font-weight: 400;
   text-decoration: none;
   overflow-wrap: anywhere;
 

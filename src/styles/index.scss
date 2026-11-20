@@ -11,8 +11,11 @@
 @use "components/error-state";
 @use "components/controls";
 @use "components/form-dialog";
+@use "components/tooltip";
+@use "components/tabs";
 
 @use "pages/status-page";
 @use "pages/auth-page";
 @use "pages/landing-pages";
 @use "pages/landing-page";
+@use "pages/publication";

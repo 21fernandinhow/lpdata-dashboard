@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { isNotFound, userMessage } from "@/api/errors"
 import {
   deleteLandingPage,
@@ -12,7 +12,13 @@ import { ErrorState } from "@/components/ErrorState"
 import { FormDialog } from "@/components/FormDialog"
 import { Icon } from "@/components/Icon"
 import { Loader } from "@/components/Loader"
+import { Tooltip } from "@/components/Tooltip"
+import { LandingPagePublication } from "@/pages/LandingPagePublication"
 import { useApi } from "@/session/context"
+
+// A aba aberta fica no endereço, para sobreviver ao recarregamento e ao histórico.
+const TAB_PARAM = "aba"
+const PUBLICATION_TAB = "publicacao"
 
 // Uma landing page por montagem: trocar de id começa do zero, sem mostrar a anterior.
 export default function LandingPageRoute() {
@@ -47,19 +53,21 @@ function LandingPagePage({ id }: { id: string }) {
     )
   }
 
-  return <LandingPageView page={state.data} onRenamed={replace} />
+  return <LandingPageView page={state.data} onUpdated={replace} />
 }
 
-type LandingPageViewProps = { page: LandingPage; onRenamed: (page: LandingPage) => void }
+type LandingPageViewProps = { page: LandingPage; onUpdated: (page: LandingPage) => void }
 
-function LandingPageView({ page, onRenamed }: LandingPageViewProps) {
+function LandingPageView({ page, onUpdated }: LandingPageViewProps) {
   const api = useApi()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const onPublication = searchParams.get(TAB_PARAM) === PUBLICATION_TAB
   const renameDialog = useRef<HTMLDialogElement>(null)
   const deleteDialog = useRef<HTMLDialogElement>(null)
 
   async function rename(form: FormData) {
-    onRenamed(await renameLandingPage(api, page.id, String(form.get("name"))))
+    onUpdated(await renameLandingPage(api, page.id, String(form.get("name"))))
   }
 
   // Sem replace, voltar no histórico abriria a landing page apagada.
@@ -70,39 +78,77 @@ function LandingPageView({ page, onRenamed }: LandingPageViewProps) {
 
   return (
     <section className="landing-page">
+      {/* Link para a lista, não history.back(): quem abriu a landing page pelo endereço sairia
+          do dashboard. */}
+      <Link to="/" className="button button--ghost button--small landing-page__back">
+        <Icon>
+          <path d="M14.25 9H3.75" />
+          <path d="M8 4.75L3.75 9L8 13.25" />
+        </Icon>
+        Voltar
+      </Link>
+
       <header className="landing-page__header">
         <h1 className="landing-page__title">{page.name}</h1>
         <div className="landing-page__actions">
-          <button
-            type="button"
-            className="button button--secondary"
-            onClick={() => renameDialog.current?.showModal()}
-          >
-            Renomear
-          </button>
-          <button
-            type="button"
-            className="button button--secondary"
-            onClick={() => deleteDialog.current?.showModal()}
-          >
-            Apagar
-          </button>
+          <Tooltip label="Renomear">
+            {(tooltipId) => (
+              <button
+                type="button"
+                className="button button--ghost button--icon"
+                aria-labelledby={tooltipId}
+                onClick={() => renameDialog.current?.showModal()}
+              >
+                <Icon>
+                  <path d="M12.5 2.75L15.25 5.5L6 14.75H3.25V12L12.5 2.75Z" />
+                  <path d="M10.75 4.5L13.5 7.25" />
+                </Icon>
+              </button>
+            )}
+          </Tooltip>
+          <Tooltip label="Apagar">
+            {(tooltipId) => (
+              <button
+                type="button"
+                className="button button--ghost button--icon"
+                aria-labelledby={tooltipId}
+                onClick={() => deleteDialog.current?.showModal()}
+              >
+                <Icon>
+                  <path d="M3 4.75H15" />
+                  <path d="M7 4.75V2.75H11V4.75" />
+                  <path d="M4.5 4.75L5.25 15.25H12.75L13.5 4.75" />
+                  <path d="M7.5 8V12" />
+                  <path d="M10.5 8V12" />
+                </Icon>
+              </button>
+            )}
+          </Tooltip>
         </div>
       </header>
 
-      <p className="landing-page__placeholder">A edição do Documento de Conteúdo chega na #14.</p>
-
-      {/* Link para a lista, não history.back(): quem abriu a landing page pelo endereço sairia
-          do dashboard. */}
-      <footer className="landing-page__footer">
-        <Link to="/" className="button button--secondary">
-          <Icon>
-            <path d="M14.25 9H3.75" />
-            <path d="M8 4.75L3.75 9L8 13.25" />
-          </Icon>
-          Voltar
+      <nav className="tabs" aria-label="Seções da landing page">
+        <Link
+          to={{ search: "" }}
+          className="tabs__tab"
+          aria-current={onPublication ? undefined : "page"}
+        >
+          Conteúdo
         </Link>
-      </footer>
+        <Link
+          to={{ search: `?${TAB_PARAM}=${PUBLICATION_TAB}` }}
+          className="tabs__tab"
+          aria-current={onPublication ? "page" : undefined}
+        >
+          Publicação
+        </Link>
+      </nav>
+
+      {onPublication ? (
+        <LandingPagePublication page={page} onUpdated={onUpdated} />
+      ) : (
+        <p className="landing-page__placeholder">A edição do Documento de Conteúdo chega na #14.</p>
+      )}
 
       <FormDialog
         ref={renameDialog}

@@ -11,4 +11,6 @@ function readApiUrl(): string {
 
 export const env = {
   apiBaseUrl: import.meta.env.MODE === "development" ? DEV_PROXY_PATH : readApiUrl(),
+  // O endereço real da API, para mostrar ao usuário. Em desenvolvimento, apiBaseUrl é o proxy.
+  apiUrl: readApiUrl(),
 } as const

@@ -107,6 +107,11 @@ function createFakeApi() {
     return { found }
   }
 
+  // O before_validation do modelo: os hosts são gravados em minúsculas.
+  function normalizeHosts(hosts: string[] | undefined) {
+    return (hosts ?? []).map((host) => String(host).toLowerCase())
+  }
+
   function buildLandingPage(userId: number, params: LandingPageParams): LandingPageRecord {
     landingPageSequence += 1
     const now = new Date().toISOString()
@@ -115,7 +120,7 @@ function createFakeApi() {
       public_id: 3400 + landingPageSequence,
       name: params.name ?? "",
       current_data: params.current_data ?? null,
-      allowed_hosts: params.allowed_hosts ?? [],
+      allowed_hosts: normalizeHosts(params.allowed_hosts),
       user_id: userId,
       created_at: now,
       updated_at: now,
@@ -217,6 +222,8 @@ function createFakeApi() {
       if (!found) return response
       const { landing_page } = (await request.json()) as { landing_page: LandingPageParams }
       const updated = { ...found, ...landing_page, updated_at: new Date().toISOString() }
+      if (landing_page.allowed_hosts)
+        updated.allowed_hosts = normalizeHosts(landing_page.allowed_hosts)
       const errors = landingPageErrors(updated)
       if (errors.length) return json({ errors }, 422)
       landingPages = landingPages.map((page) => (page.id === found.id ? updated : page))
@@ -228,6 +235,13 @@ function createFakeApi() {
       if (!found) return response
       landingPages = landingPages.filter((page) => page.id !== found.id)
       return empty(204)
+    }),
+
+    // Leitura pública: sem token, o próprio documento, sem envelope.
+    http.get(url("/landing_pages/:public_id"), ({ params }) => {
+      const found = landingPages.find((page) => page.public_id === Number(params.public_id))
+      if (!found) return json(LANDING_PAGE_404, 404)
+      return json(found.current_data as Parameters<typeof json>[0])
     }),
   ]
 

@@ -1,0 +1,117 @@
+// A aba Publicação da landing page: identificador público, hosts e leitura pública.
+
+.publication {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 10);
+}
+
+.publication__section {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 3);
+}
+
+.publication__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 4);
+}
+
+.publication__title {
+  font-size: var(--text-lg);
+}
+
+.publication__text,
+.publication__hint,
+.publication__empty {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
+.publication__hint {
+  flex-basis: 100%;
+  font-size: var(--text-xs);
+}
+
+.publication__error {
+  padding: calc(var(--spacing) * 3);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  color: var(--color-heading);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.publication__values {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 3);
+}
+
+.publication__value {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 1);
+
+  dt {
+    color: var(--color-heading);
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+
+  dd {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing) * 3);
+    min-width: 0;
+  }
+}
+
+.publication__value code,
+.publication__host code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--text-sm);
+}
+
+.publication__hosts {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 2);
+  list-style: none;
+}
+
+.publication__host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 3);
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.publication__add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+
+  .field {
+    flex: 1;
+    min-width: 12rem;
+  }
+}
+
+.publication__json {
+  max-height: 28rem;
+  padding: calc(var(--spacing) * 4);
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
