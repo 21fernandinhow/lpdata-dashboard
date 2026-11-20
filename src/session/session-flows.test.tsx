@@ -142,8 +142,6 @@ describe("sessão", () => {
     renderApp("/")
     await findLandingPages()
 
-    await userEvent.click(screen.getByRole("button", { name: "Conta" }))
-    expect(screen.getByText(EMAIL)).toBeVisible()
     await userEvent.click(screen.getByRole("button", { name: "Sair" }))
 
     expect(await screen.findByLabelText("Senha")).toBeInTheDocument()
@@ -158,7 +156,6 @@ describe("sessão", () => {
     renderApp("/")
     await findLandingPages()
 
-    await userEvent.click(screen.getByRole("button", { name: "Conta" }))
     await userEvent.click(screen.getByRole("button", { name: "Sair" }))
 
     await waitFor(() => expect(fakeApi.requests("DELETE", "/auth/sign_out")).toHaveLength(1))

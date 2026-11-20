@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { AccountMenu } from "@/components/AccountMenu"
+import { SignOutButton } from "@/components/SignOutButton"
 import { ThemeMenu } from "@/components/ThemeMenu"
 
 export function Header() {
@@ -24,7 +24,7 @@ export function Header() {
           <span className="header__product">Dashboard</span>
         </Link>
         <div className="header__actions">
-          <AccountMenu />
+          <SignOutButton />
           <ThemeMenu />
         </div>
       </div>

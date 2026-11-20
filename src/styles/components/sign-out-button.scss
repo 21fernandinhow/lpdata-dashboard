@@ -1,0 +1,6 @@
+@use "../utils/menu";
+
+// Mesmo desenho do botão do seletor de tema, ao lado dele no cabeçalho.
+.sign-out-button {
+  @include menu.trigger(--sign-out);
+}
