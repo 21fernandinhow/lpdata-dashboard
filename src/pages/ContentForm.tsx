@@ -53,9 +53,7 @@ export function ContentForm({ ref, fields, errors, onFieldChange }: ContentFormP
   return (
     <div ref={rootRef} className="content-form">
       {fields.length === 0 ? (
-        <p className="content-form__empty">
-          O documento está vazio. A estrutura se cria no Modo Raw.
-        </p>
+        <p className="content-form__empty">O documento está vazio. A estrutura se cria no JSON.</p>
       ) : (
         <Nodes nodes={fields} depth={0} errors={errors} onFieldChange={onFieldChange} />
       )}
@@ -101,7 +99,7 @@ function Nodes({ nodes, depth, errors, onFieldChange }: NodesProps) {
       return (
         <div key={node.path} className="content-form__readonly" data-path={node.path}>
           <span className="content-form__label">{node.label}</span>
-          <p>{node.reason} Edite no Modo Raw.</p>
+          <p>{node.reason} Edite no JSON.</p>
           <FieldErrors messages={errors.get(node.path)} />
         </div>
       )

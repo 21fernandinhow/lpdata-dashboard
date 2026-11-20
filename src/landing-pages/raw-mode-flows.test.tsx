@@ -29,7 +29,7 @@ async function openContent() {
   fakeApi.createUser(EMAIL, "senha-secreta")
   localStorage.setItem(REFRESH_TOKEN_KEY, fakeApi.openSession(EMAIL))
   const page = fakeApi.createLandingPage(EMAIL, "Lançamento", DOCUMENT)
-  const app = renderApp(`/landing-pages/${page.id}?modo=raw`)
+  const app = renderApp(`/landing-pages/${page.id}?modo=json`)
   await screen.findByLabelText("Documento de Conteúdo")
   return { page, app }
 }
@@ -76,7 +76,7 @@ describe("Modo Raw", () => {
     expect(saveButton()).toBeDisabled()
 
     app.unmount()
-    renderApp(`/landing-pages/${page.id}?modo=raw`)
+    renderApp(`/landing-pages/${page.id}?modo=json`)
 
     expect(await screen.findByLabelText("Documento de Conteúdo")).toHaveValue(format(EDITED))
   })
@@ -150,7 +150,7 @@ describe("Modo Raw", () => {
     await userEvent.click(screen.getByRole("link", { name: "Publicação" }))
     await userEvent.click(screen.getByRole("link", { name: "Conteúdo" }))
     // Conteúdo abre no Formulário; o texto continua o mesmo ao voltar para o Raw.
-    await userEvent.click(screen.getByRole("link", { name: "Raw" }))
+    await userEvent.click(screen.getByRole("link", { name: "JSON" }))
 
     expect(await screen.findByLabelText("Documento de Conteúdo")).toHaveValue(format(EDITED))
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument()

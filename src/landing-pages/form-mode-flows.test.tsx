@@ -117,10 +117,10 @@ describe("Modo Formulário", () => {
     await openForm()
 
     await replace(within(section("hero")).getByLabelText("title"), "Do formulário")
-    await userEvent.click(screen.getByRole("link", { name: "Raw" }))
+    await userEvent.click(screen.getByRole("link", { name: "JSON" }))
 
     const editor = await screen.findByLabelText<HTMLTextAreaElement>("Documento de Conteúdo")
-    expect(window.location.search).toBe("?modo=raw")
+    expect(window.location.search).toBe("?modo=json")
     expect(JSON.parse(editor.value).hero.title.value).toBe("Do formulário")
     // Só o valor mudou no texto: a formatação do resto continua a mesma.
     expect(editor.value).toBe(JSON.stringify(DOCUMENT, null, 2).replace('"Olá"', '"Do formulário"'))
@@ -136,7 +136,7 @@ describe("Modo Formulário", () => {
   })
 
   it("JSON inválido no Raw bloqueia o Formulário e mostra o erro", async () => {
-    await openForm(DOCUMENT, "?modo=raw")
+    await openForm(DOCUMENT, "?modo=json")
     const editor = await screen.findByLabelText("Documento de Conteúdo")
 
     await userEvent.clear(editor)
@@ -148,7 +148,7 @@ describe("Modo Formulário", () => {
     expect(alert).toHaveTextContent("JSON inválido na linha 3, coluna 1: Esperava um valor.")
     expect(screen.queryByText("hero", { selector: "summary" })).not.toBeInTheDocument()
 
-    await userEvent.click(within(alert).getByRole("link", { name: "Corrigir no Modo Raw" }))
+    await userEvent.click(within(alert).getByRole("link", { name: "Corrigir no JSON" }))
 
     expect(await screen.findByLabelText("Documento de Conteúdo")).toBeInTheDocument()
   })
@@ -158,7 +158,7 @@ describe("Modo Formulário", () => {
 
     const hero = section("hero")
     expect(within(hero).getByText("solto")).toBeInTheDocument()
-    expect(within(hero).getByText(/Edite no Modo Raw/)).toBeInTheDocument()
+    expect(within(hero).getByText(/Edite no JSON/)).toBeInTheDocument()
     expect(within(hero).getAllByRole("textbox")).toHaveLength(1)
   })
 

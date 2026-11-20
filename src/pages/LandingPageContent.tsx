@@ -26,9 +26,10 @@ type ContentProps = {
   onSaved: (page: LandingPage, text: string) => void
 }
 
-// O modo fica no endereço. O Formulário é o padrão: é o modo de quem não lê JSON.
+// O modo fica no endereço. O Formulário é o padrão: é o modo de quem não lê JSON. Na interface,
+// o Modo Raw se chama JSON.
 const MODE_PARAM = "modo"
-const RAW_MODE = "raw"
+const RAW_MODE = "json"
 
 // O contrato do documento na documentação: Campos Editáveis, tipos e erros possíveis.
 const CONTRACT_DOCS = "https://lpdata.io/landing-pages#documento-de-conteúdo"
@@ -130,7 +131,7 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
             className="segmented__option"
             aria-current={onRaw ? "page" : undefined}
           >
-            Raw
+            JSON
           </Link>
         </nav>
         <div className="content__save">
@@ -214,7 +215,7 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
             coluna {source.error.column}: {source.error.message}
           </p>
           <p>
-            <Link to={{ search: `?${MODE_PARAM}=${RAW_MODE}` }}>Corrigir no Modo Raw</Link>
+            <Link to={{ search: `?${MODE_PARAM}=${RAW_MODE}` }}>Corrigir no JSON</Link>
           </p>
         </div>
       )}

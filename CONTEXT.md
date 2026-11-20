@@ -16,6 +16,7 @@ _Evite_: Editor visual, builder, formulário dinâmico
 
 **Modo Raw**:
 Visão do Documento de Conteúdo como JSON, editável diretamente. É o único lugar onde a estrutura do documento muda — criar chave, renomear, alterar `type`, aninhar, adicionar item a array.
+Na interface, o seletor de modo o apresenta como "JSON"; no código e na documentação, o termo continua Modo Raw.
 _Evite_: Modo avançado, modo desenvolvedor, modo JSON
 
 **Documento em Edição**:
