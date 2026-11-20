@@ -12,15 +12,32 @@
   gap: calc(var(--spacing) * 3);
 }
 
-.publication__heading {
+.publication__title-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: calc(var(--spacing) * 4);
+  gap: calc(var(--spacing) * 1);
 }
 
 .publication__title {
   font-size: var(--text-lg);
+}
+
+// Menor que os outros ícones: acompanha o título.
+.publication__info {
+  width: 1.75rem;
+  height: 1.75rem;
+  cursor: help;
+}
+
+.publication__url {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 1);
+  min-width: 0;
+
+  code {
+    margin-inline-end: calc(var(--spacing) * 2);
+  }
 }
 
 .publication__text,
@@ -44,32 +61,7 @@
   font-weight: 500;
 }
 
-.publication__values {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--spacing) * 3);
-}
-
-.publication__value {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--spacing) * 1);
-
-  dt {
-    color: var(--color-heading);
-    font-size: var(--text-sm);
-    font-weight: 500;
-  }
-
-  dd {
-    display: flex;
-    align-items: center;
-    gap: calc(var(--spacing) * 3);
-    min-width: 0;
-  }
-}
-
-.publication__value code,
+.publication__url code,
 .publication__host code {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -109,15 +101,4 @@
     width: 2.5rem;
     height: 2.5rem;
   }
-}
-
-.publication__json {
-  max-height: 28rem;
-  padding: calc(var(--spacing) * 4);
-  overflow: auto;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background-color: var(--color-surface);
-  font-size: var(--text-sm);
-  line-height: 1.6;
 }

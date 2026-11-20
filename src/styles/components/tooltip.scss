@@ -16,7 +16,8 @@
   color: var(--color-bg);
   font-size: var(--text-xs);
   font-weight: 500;
-  white-space: nowrap;
+  width: max-content;
+  max-width: 16rem;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;

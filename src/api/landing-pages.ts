@@ -1,5 +1,4 @@
 import type { AxiosInstance } from "axios"
-import { createHttpClient } from "@/api/http"
 import { env } from "@/env"
 
 // A landing page como a API a serializa nas rotas de gerenciamento.
@@ -54,14 +53,6 @@ export async function updateAllowedHosts(api: AxiosInstance, id: number, hosts: 
     landing_page: { allowed_hosts: hosts },
   })
   return data.landing_page
-}
-
-// A leitura pública vai sem token, como a Aplicação Consumidora a faz.
-const publicHttp = createHttpClient()
-
-export async function getPublicContent(publicId: number, signal?: AbortSignal) {
-  const { data } = await publicHttp.get<unknown>(`/landing_pages/${publicId}`, { signal })
-  return data
 }
 
 export function publicUrl(publicId: number) {

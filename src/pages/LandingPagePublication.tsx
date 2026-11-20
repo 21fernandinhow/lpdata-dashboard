@@ -1,16 +1,9 @@
-import { useCallback, useId, useState, type FormEvent } from "react"
+import { useId, useState, type FormEvent } from "react"
 import { userMessage } from "@/api/errors"
 import { hostFrom } from "@/api/hosts"
-import {
-  getPublicContent,
-  publicUrl,
-  updateAllowedHosts,
-  type LandingPage,
-} from "@/api/landing-pages"
-import { useLoad } from "@/api/use-load"
+import { publicUrl, updateAllowedHosts, type LandingPage } from "@/api/landing-pages"
 import { CopyButton } from "@/components/CopyButton"
 import { Icon } from "@/components/Icon"
-import { Loader } from "@/components/Loader"
 import { Tooltip } from "@/components/Tooltip"
 import { useApi } from "@/session/context"
 
@@ -24,36 +17,61 @@ export function LandingPagePublication({ page, onUpdated }: PublicationProps) {
     <div className="publication">
       <PublicIdentifier publicId={page.public_id} />
       <AllowedHosts page={page} onUpdated={onUpdated} />
-      <PublicView publicId={page.public_id} />
     </div>
   )
 }
 
+// Só a URL: o identificador público é o número no fim dela, e o ícone de informação explica.
 function PublicIdentifier({ publicId }: { publicId: number }) {
   const url = publicUrl(publicId)
 
   return (
     <section className="publication__section">
-      <h2 className="publication__title">Identificador público</h2>
+      <div className="publication__title-row">
+        <h2 className="publication__title">URL pública</h2>
+        <Tooltip
+          label={`O identificador público é o número no fim da URL: ${publicId}. A Aplicação Consumidora pode guardar só ele e montar a URL.`}
+        >
+          {(tooltipId) => (
+            <button
+              type="button"
+              className="button button--ghost button--icon publication__info"
+              aria-label="Sobre o identificador público"
+              aria-describedby={tooltipId}
+            >
+              <Icon>
+                <circle cx="9" cy="9" r="7.25" />
+                <path d="M9 12.25V8.5" />
+                <path d="M9 5.75H9.01" />
+              </Icon>
+            </button>
+          )}
+        </Tooltip>
+      </div>
       <p className="publication__text">
-        A Aplicação Consumidora busca o Documento de Conteúdo por esta URL, sem token.
+        A Aplicação Consumidora busca o Documento de Conteúdo por esta URL.
       </p>
-      <dl className="publication__values">
-        <div className="publication__value">
-          <dt>Identificador</dt>
-          <dd>
-            <code>{publicId}</code>
-            <CopyButton value={String(publicId)} label="Copiar identificador público" />
-          </dd>
-        </div>
-        <div className="publication__value">
-          <dt>URL pública</dt>
-          <dd>
-            <code>{url}</code>
-            <CopyButton value={url} label="Copiar URL pública" />
-          </dd>
-        </div>
-      </dl>
+      <div className="publication__url">
+        <code>{url}</code>
+        <CopyButton value={url} label="Copiar URL pública" />
+        <Tooltip label="Abrir em nova aba">
+          {(tooltipId) => (
+            <a
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="button button--ghost button--icon"
+              aria-labelledby={tooltipId}
+            >
+              <Icon>
+                <path d="M10.25 2.75H15.25V7.75" />
+                <path d="M15.25 2.75L8.5 9.5" />
+                <path d="M13.25 10.75V14C13.25 14.69 12.69 15.25 12 15.25H4C3.31 15.25 2.75 14.69 2.75 14V6C2.75 5.31 3.31 4.75 4 4.75H7.25" />
+              </Icon>
+            </a>
+          )}
+        </Tooltip>
+      </div>
     </section>
   )
 }
@@ -164,49 +182,6 @@ function AllowedHosts({ page, onUpdated }: PublicationProps) {
           Só o host, como example.com ou localhost:5173. Uma URL colada vira só o host.
         </p>
       </form>
-    </section>
-  )
-}
-
-function PublicView({ publicId }: { publicId: number }) {
-  const load = useCallback((signal: AbortSignal) => getPublicContent(publicId, signal), [publicId])
-  const { state, reload } = useLoad(load)
-
-  return (
-    <section className="publication__section">
-      <div className="publication__heading">
-        <h2 className="publication__title">O que o consumidor recebe</h2>
-        <Tooltip label="Atualizar">
-          {(tooltipId) => (
-            <button
-              type="button"
-              className="button button--ghost button--icon"
-              aria-labelledby={tooltipId}
-              onClick={reload}
-              disabled={state.status === "loading"}
-            >
-              <Icon>
-                <path d="M15.75 9A6.75 6.75 0 1 1 9 2.25C10.89 2.25 12.7 3 14.06 4.31L15.75 6" />
-                <path d="M15.75 2.25V6H12" />
-              </Icon>
-            </button>
-          )}
-        </Tooltip>
-      </div>
-      <p className="publication__text">
-        O corpo da leitura pública, como a Aplicação Consumidora o recebe. A apresentação é dela.
-      </p>
-      {state.status === "loading" && <Loader />}
-      {state.status === "failed" && (
-        <p className="publication__error" role="alert">
-          {userMessage(state.error)}
-        </p>
-      )}
-      {state.status === "loaded" && (
-        <pre className="publication__json" aria-label="Resposta da leitura pública" tabIndex={0}>
-          {JSON.stringify(state.data, null, 2)}
-        </pre>
-      )}
     </section>
   )
 }

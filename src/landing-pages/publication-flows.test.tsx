@@ -27,6 +27,10 @@ async function openPublication() {
   return page
 }
 
+function publicUrlOf(publicId: number) {
+  return `https://api.test.lpdata.io/landing_pages/${publicId}`
+}
+
 function hostsList() {
   return screen.getByRole("list", { name: "Hosts permitidos" })
 }
@@ -52,12 +56,12 @@ describe("abas", () => {
 
     expect(window.location.search).toBe("?aba=publicacao")
     expect(screen.getByRole("link", { name: "Publicação" })).toHaveAttribute("aria-current", "page")
-    expect(screen.getByText(String(page.public_id))).toBeInTheDocument()
+    expect(screen.getByText(publicUrlOf(page.public_id))).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole("link", { name: "Conteúdo" }))
 
     expect(window.location.search).toBe("")
-    expect(screen.queryByText(String(page.public_id))).not.toBeInTheDocument()
+    expect(screen.queryByText(publicUrlOf(page.public_id))).not.toBeInTheDocument()
   })
 
   it("voltar leva à lista", async () => {
@@ -69,22 +73,29 @@ describe("abas", () => {
   })
 })
 
-describe("identificador público", () => {
-  it("mostra o public_id e a URL pública, e copia os dois", async () => {
+describe("URL pública", () => {
+  it("mostra só a URL, copia e abre em nova aba", async () => {
     const user = userEvent.setup()
     const page = await openPublication()
-    const publicUrl = `https://api.test.lpdata.io/landing_pages/${page.public_id}`
+    const url = publicUrlOf(page.public_id)
 
-    expect(screen.getByText(String(page.public_id))).toBeInTheDocument()
-    expect(screen.getByText(publicUrl)).toBeInTheDocument()
-
-    await user.click(screen.getByRole("button", { name: "Copiar identificador público" }))
-    expect(await navigator.clipboard.readText()).toBe(String(page.public_id))
-    // O tooltip, que é o nome do botão, confirma a cópia.
-    expect(screen.getByRole("button", { name: "Copiado" })).toBeInTheDocument()
+    expect(screen.getByText(url)).toBeInTheDocument()
+    const open = screen.getByRole("link", { name: "Abrir em nova aba" })
+    expect(open).toHaveAttribute("href", url)
+    expect(open).toHaveAttribute("target", "_blank")
 
     await user.click(screen.getByRole("button", { name: "Copiar URL pública" }))
-    expect(await navigator.clipboard.readText()).toBe(publicUrl)
+    expect(await navigator.clipboard.readText()).toBe(url)
+    // O tooltip, que é o nome do botão, confirma a cópia.
+    expect(screen.getByRole("button", { name: "Copiado" })).toBeInTheDocument()
+  })
+
+  it("o ícone de informação explica que o identificador é o fim da URL", async () => {
+    const page = await openPublication()
+
+    expect(
+      screen.getByRole("button", { name: "Sobre o identificador público" }),
+    ).toHaveAccessibleDescription(new RegExp(`fim da URL: ${page.public_id}\\.`))
   })
 })
 
@@ -151,31 +162,5 @@ describe("hosts permitidos", () => {
 
     expect(screen.getByText(/qualquer origem/)).toBeInTheDocument()
     expect(screen.getByText(/limite de leituras/)).toBeInTheDocument()
-  })
-})
-
-describe("o que o consumidor recebe", () => {
-  it("mostra o corpo da leitura pública, sem token", async () => {
-    const page = await openPublication()
-
-    const view = await screen.findByLabelText("Resposta da leitura pública")
-
-    expect(JSON.parse(view.textContent ?? "")).toEqual(DOCUMENT)
-    const [read] = fakeApi.requests("GET", `/landing_pages/${page.public_id}`)
-    expect(read.headers.get("Authorization")).toBeNull()
-  })
-
-  it("atualizar lê de novo", async () => {
-    const page = await openPublication()
-    await screen.findByLabelText("Resposta da leitura pública")
-    fakeApi.landingPages()[0].current_data = { novo: { value: "sim", type: "string" } }
-
-    await userEvent.click(screen.getByRole("button", { name: "Atualizar" }))
-
-    await screen.findByText(/"novo"/)
-    expect(
-      JSON.parse(screen.getByLabelText("Resposta da leitura pública").textContent ?? ""),
-    ).toEqual({ novo: { value: "sim", type: "string" } })
-    expect(fakeApi.requests("GET", `/landing_pages/${page.public_id}`)).toHaveLength(2)
   })
 })

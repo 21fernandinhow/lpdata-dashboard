@@ -236,13 +236,6 @@ function createFakeApi() {
       landingPages = landingPages.filter((page) => page.id !== found.id)
       return empty(204)
     }),
-
-    // Leitura pública: sem token, o próprio documento, sem envelope.
-    http.get(url("/landing_pages/:public_id"), ({ params }) => {
-      const found = landingPages.find((page) => page.public_id === Number(params.public_id))
-      if (!found) return json(LANDING_PAGE_404, 404)
-      return json(found.current_data as Parameters<typeof json>[0])
-    }),
   ]
 
   return {
