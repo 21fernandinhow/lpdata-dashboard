@@ -24,8 +24,8 @@ export function Header() {
           <span className="header__product">Dashboard</span>
         </Link>
         <div className="header__actions">
-          <SignOutButton />
           <ThemeMenu />
+          <SignOutButton />
         </div>
       </div>
     </header>
