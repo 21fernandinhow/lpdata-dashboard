@@ -42,7 +42,7 @@ function hostsShown() {
 }
 
 async function addHost(text: string) {
-  await userEvent.type(screen.getByLabelText("Host"), text)
+  await userEvent.type(screen.getByLabelText("Adicionar Host"), text)
   await userEvent.click(screen.getByRole("button", { name: "Adicionar host" }))
 }
 
@@ -108,7 +108,7 @@ describe("hosts permitidos", () => {
 
     expect(await within(hostsList()).findByText("example.com")).toBeInTheDocument()
     expect(patches(page.id)[0].body).toEqual({ landing_page: { allowed_hosts: ["example.com"] } })
-    expect(screen.getByLabelText("Host")).toHaveValue("")
+    expect(screen.getByLabelText("Adicionar Host")).toHaveValue("")
 
     await addHost("localhost:5173")
 

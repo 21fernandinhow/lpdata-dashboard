@@ -152,7 +152,7 @@ function AllowedHosts({ page, onUpdated }: PublicationProps) {
 
       <form className="publication__add" onSubmit={add}>
         <label className="field">
-          <span>Host</span>
+          <span>Adicionar Host</span>
           <input
             name="host"
             value={draft}
