@@ -41,7 +41,7 @@
   list-style: none;
 }
 
-// Em repouso, o texto tem a cor da borda; no hover e no foco, os dois vão juntos para o acento.
+// No hover e no foco, borda e texto vão juntos para a cor dos títulos.
 // Cada landing page é um box independente, todo clicável: o ::after do link cobre o item.
 .landing-pages__item {
   position: relative;
@@ -57,17 +57,17 @@
 
   &:hover,
   &:focus-within {
-    border-color: var(--color-accent);
+    border-color: var(--color-heading);
 
     .landing-pages__link,
     .landing-pages__meta {
-      color: var(--color-accent);
+      color: var(--color-heading);
     }
   }
 }
 
 .landing-pages__link {
-  color: var(--color-border);
+  color: var(--color-muted);
   font-weight: 400;
   text-decoration: none;
   overflow-wrap: anywhere;
@@ -81,7 +81,7 @@
 }
 
 .landing-pages__meta {
-  color: var(--color-border);
+  color: var(--color-muted);
   font-size: var(--text-sm);
   transition: color 150ms;
 }
