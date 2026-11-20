@@ -10,7 +10,7 @@ describe("projectFields", () => {
       features: [{ label: { value: "Rápido", type: "string" } }],
     }
 
-    expect(projectFields(document)).toEqual([
+    expect(projectFields(document)).toMatchObject([
       {
         kind: "group",
         path: "$.hero",
@@ -53,7 +53,7 @@ describe("projectFields", () => {
     ["hosted_file", "https://cdn.io/a.webp"],
     ["external_file", "https://x.io/v"],
   ])("o tipo %s vira campo", (type, value) => {
-    expect(projectFields({ f: { value, type } })).toEqual([
+    expect(projectFields({ f: { value, type } })).toMatchObject([
       { kind: "field", path: "$.f", label: "f", type, value },
     ])
   })
@@ -65,13 +65,13 @@ describe("projectFields", () => {
     [{ f: { value: "1", type: "number" } }, "$.f", "O value não corresponde ao type."],
     [{ f: { value: null, type: "string" } }, "$.f", "O value não corresponde ao type."],
   ])("o que não tem editor fica só para leitura: %j", (document, path, reason) => {
-    expect(projectFields(document)).toEqual([
+    expect(projectFields(document)).toMatchObject([
       { kind: "readonly", path, label: path.slice(2), reason },
     ])
   })
 
   it("documento que não é objeto nem array fica só para leitura", () => {
-    expect(projectFields("solto")).toEqual([
+    expect(projectFields("solto")).toMatchObject([
       {
         kind: "readonly",
         path: "$",
@@ -81,8 +81,18 @@ describe("projectFields", () => {
     ])
   })
 
+  it("at dá o caminho em passos, sem ambiguidade com chave que tem ponto", () => {
+    const [group] = projectFields({ "a.b": [{ c: { value: "x", type: "string" } }] })
+
+    expect(group).toMatchObject({ path: "$.a.b", at: ["a.b"], list: true })
+    expect(group.kind === "group" && group.children[0]).toMatchObject({
+      at: ["a.b", 0],
+      children: [{ at: ["a.b", 0, "c"] }],
+    })
+  })
+
   it("um array na raiz vira itens", () => {
-    expect(projectFields([{ a: { value: "x", type: "string" } }])).toEqual([
+    expect(projectFields([{ a: { value: "x", type: "string" } }])).toMatchObject([
       {
         kind: "group",
         path: "$[0]",

@@ -11,11 +11,11 @@ O vocabulário do domínio — Usuário, Landing Page, Documento de Conteúdo, C
 Os termos abaixo pertencem ao dashboard.
 
 **Modo Formulário**:
-Visão do Documento de Conteúdo em que cada Campo Editável é apresentado pelo editor correspondente ao seu `type`. Edita somente `value`; a estrutura é imutável nesse modo.
+Visão do Documento de Conteúdo em que cada Campo Editável é apresentado pelo editor correspondente ao seu `type`. Edita `value` e, desde a ADR 0009, também a estrutura: cria seção e campo, adiciona item a array, renomeia, remove e muda o `type`.
 _Evite_: Editor visual, builder, formulário dinâmico
 
 **Modo Raw**:
-Visão do Documento de Conteúdo como JSON, editável diretamente. É o único lugar onde a estrutura do documento muda — criar chave, renomear, alterar `type`, aninhar, adicionar item a array.
+Visão do Documento de Conteúdo como JSON, editável diretamente. Muda qualquer coisa do documento, inclusive o que o Modo Formulário não alcança, como a ordem das chaves.
 Na interface, o seletor de modo o apresenta como "JSON"; no código e na documentação, o termo continua Modo Raw.
 _Evite_: Modo avançado, modo desenvolvedor, modo JSON
 

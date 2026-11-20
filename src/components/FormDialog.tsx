@@ -1,12 +1,14 @@
 import { useId, useRef, useState, type FormEvent, type ReactNode, type RefObject } from "react"
 import { userMessage } from "@/api/errors"
+import { FormDialogError } from "@/components/form-dialog-error"
 
 type FormDialogProps = {
   // Quem abre o dialog chama ref.current.showModal().
   ref: RefObject<HTMLDialogElement | null>
   title: string
   submitLabel: string
-  // Grava. Se rejeitar, a mensagem aparece no dialog, que continua aberto.
+  // Grava. Se rejeitar, a mensagem aparece no dialog, que continua aberto: a do FormDialogError
+  // como está, e a de outro erro pela mensagem genérica da situação.
   onSubmit: (form: FormData) => Promise<void>
   children: ReactNode
 }
@@ -28,7 +30,7 @@ export function FormDialog({ ref, title, submitLabel, onSubmit, children }: Form
       await onSubmit(data)
       ref.current?.close()
     } catch (caught) {
-      setError(userMessage(caught))
+      setError(caught instanceof FormDialogError ? caught.message : userMessage(caught))
     } finally {
       setPending(false)
     }

@@ -7,7 +7,7 @@ import { JsonEditor, type JsonEditorHandle } from "@/components/JsonEditor"
 import { Tooltip } from "@/components/Tooltip"
 import { contractErrors, type ContractError } from "@/content/contract-errors"
 import { projectFields, setFieldValue } from "@/content/form-fields"
-import { parseJsonSource, type JsonSourceError } from "@/content/json-source"
+import { formatDocument, parseJsonSource, type JsonSourceError } from "@/content/json-source"
 import { ContentForm, type ContentFormHandle } from "@/pages/ContentForm"
 import { useApi } from "@/session/context"
 
@@ -227,9 +227,11 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
       {!onRaw && source.ok && (
         <ContentForm
           ref={formRef}
+          document={source.value}
           fields={fields}
           errors={fieldErrors}
           onFieldChange={(path, value) => onDraftChange(setFieldValue(draft, path, value))}
+          onDocumentChange={(document) => onDraftChange(formatDocument(document))}
         />
       )}
 

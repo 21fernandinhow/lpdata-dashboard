@@ -1,4 +1,10 @@
+---
+status: superseded by ADR-0009
+---
+
 # Dois modos de edição do Documento de Conteúdo
+
+> Substituída pela [ADR 0009](0009-formulario-tambem-edita-a-estrutura.md): o Modo Formulário também edita a estrutura. O resto desta decisão, os dois modos sobre o mesmo Documento em Edição e o bloqueio do formulário com JSON inválido, continua valendo.
 
 O Documento de Conteúdo é editado em dois modos sobre o mesmo Documento em Edição mantido em memória.
 

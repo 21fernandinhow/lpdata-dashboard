@@ -70,21 +70,11 @@
   }
 }
 
-// O booleano: interruptor antes do rótulo, na mesma linha.
-.content-form__field--inline {
-  flex-flow: row wrap;
-  align-items: center;
-  gap: calc(var(--spacing) * 3);
-
-  .content-form__error {
-    flex-basis: 100%;
-  }
-}
-
 .content-form__heading {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: calc(var(--spacing) * 2);
+  min-height: 1.75rem;
 }
 
 .content-form__label {
@@ -94,10 +84,55 @@
   font-weight: 500;
 }
 
+// O type como select discreto ao lado do nome. Mudar zera o value (ADR 0009).
 .content-form__type {
+  padding: 0 calc(var(--spacing) * 1);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: none;
   color: var(--color-icon);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--color-border);
+    color: var(--color-heading);
+  }
+}
+
+// Renomear e remover, à direita do nome do nó.
+.content-form__node-actions {
+  display: flex;
+  gap: calc(var(--spacing) * 0.5);
+  margin-left: auto;
+}
+
+.content-form__icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+// O rodapé de cada seção: adicionar dentro dela, à esquerda, e renomear e remover a própria
+// seção, à direita. Os botões da raiz ficam no fim do formulário.
+.content-form__group-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  padding-top: calc(var(--spacing) * 2);
+  border-top: 1px dashed var(--color-border);
+}
+
+.content-form__add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 1);
+
+  svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
 }
 
 .content-form__readonly p,
