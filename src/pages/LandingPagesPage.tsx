@@ -5,6 +5,7 @@ import { createLandingPage, listLandingPages, type LandingPage } from "@/api/lan
 import { useLoad } from "@/api/use-load"
 import { ErrorState } from "@/components/ErrorState"
 import { FormDialog } from "@/components/FormDialog"
+import { HomeTabs } from "@/components/HomeTabs"
 import { Icon } from "@/components/Icon"
 import { Loader } from "@/components/Loader"
 import { Tooltip } from "@/components/Tooltip"
@@ -44,8 +45,9 @@ export default function LandingPagesPage() {
 
   return (
     <section className="landing-pages">
-      <header className="landing-pages__header">
-        <h1 className="landing-pages__title">Landing pages</h1>
+      <header className="home-bar">
+        <h1 className="visually-hidden">Landing pages</h1>
+        <HomeTabs current="landing-pages" />
         <Tooltip label="Nova landing page">
           {(tooltipId) => (
             <button

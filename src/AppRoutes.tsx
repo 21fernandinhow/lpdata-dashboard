@@ -1,14 +1,7 @@
 import { createBrowserRouter, type RouteObject } from "react-router-dom"
 import { AppShell } from "@/components/AppShell"
 import { RouteError } from "@/components/ErrorBoundary"
-import {
-  AssetsPage,
-  LandingPagePage,
-  LandingPagesPage,
-  LoginPage,
-  NotFoundPage,
-  SignupPage,
-} from "@/pages/lazy-pages"
+import { HomePage, LandingPagePage, LoginPage, NotFoundPage, SignupPage } from "@/pages/lazy-pages"
 import { GuestOnly, RequireSession } from "@/session/guards"
 
 const routes: RouteObject[] = [
@@ -20,9 +13,8 @@ const routes: RouteObject[] = [
       {
         element: <RequireSession />,
         children: [
-          { index: true, element: <LandingPagesPage /> },
+          { index: true, element: <HomePage /> },
           { path: "landing-pages/:id", element: <LandingPagePage /> },
-          { path: "assets", element: <AssetsPage /> },
         ],
       },
       {

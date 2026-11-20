@@ -7,6 +7,7 @@ import { formatBytes, previewKind, typeLabel } from "@/assets/asset-format"
 import { CopyButton } from "@/components/CopyButton"
 import { ErrorState } from "@/components/ErrorState"
 import { FormDialog } from "@/components/FormDialog"
+import { ASSETS_TAB, HOME_TAB_PARAM, HomeTabs } from "@/components/HomeTabs"
 import { Icon } from "@/components/Icon"
 import { Loader } from "@/components/Loader"
 import { Tooltip } from "@/components/Tooltip"
@@ -76,19 +77,20 @@ export default function AssetsPage() {
 
   return (
     <section className="assets">
-      <header className="assets__header">
-        <h1 className="assets__title">Assets</h1>
-        <div className="assets__tools">
+      <header className="home-bar">
+        <h1 className="visually-hidden">Assets</h1>
+        <HomeTabs current="assets" />
+        <div className="home-bar__tools">
           <nav className="segmented" aria-label="Visão">
             <Link
-              to={{ search: "" }}
+              to={{ search: `?${HOME_TAB_PARAM}=${ASSETS_TAB}` }}
               className="segmented__option"
               aria-current={asList ? undefined : "page"}
             >
               Grade
             </Link>
             <Link
-              to={{ search: `?${VIEW_PARAM}=${LIST_VIEW}` }}
+              to={{ search: `?${HOME_TAB_PARAM}=${ASSETS_TAB}&${VIEW_PARAM}=${LIST_VIEW}` }}
               className="segmented__option"
               aria-current={asList ? "page" : undefined}
             >

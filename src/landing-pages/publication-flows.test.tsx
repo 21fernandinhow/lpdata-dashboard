@@ -69,7 +69,9 @@ describe("abas", () => {
 
     await userEvent.click(screen.getByRole("link", { name: "Voltar" }))
 
-    expect(await screen.findByRole("heading", { level: 1, name: "Landing pages" })).toBeVisible()
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Landing pages" }),
+    ).toBeInTheDocument()
   })
 })
 

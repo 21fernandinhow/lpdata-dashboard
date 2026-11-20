@@ -24,7 +24,7 @@ function signedIn() {
   localStorage.setItem(REFRESH_TOKEN_KEY, fakeApi.openSession(EMAIL))
 }
 
-async function openAssets(path = "/assets") {
+async function openAssets(path = "/?aba=assets") {
   renderApp(path)
   await screen.findByRole("heading", { level: 1, name: "Assets" })
 }
@@ -37,23 +37,40 @@ function fileInput() {
   return screen.getByLabelText<HTMLInputElement>("Arquivo para enviar")
 }
 
-describe("navegação", () => {
-  it("o cabeçalho leva às landing pages e aos assets", async () => {
+describe("abas da página inicial", () => {
+  it("a página inicial abre em Landing pages, e a aba Assets fica no endereço", async () => {
     signedIn()
     renderApp("/")
-    const nav = await screen.findByRole("navigation", { name: "Principal" })
+    const tabs = await screen.findByRole("navigation", { name: "Seções do dashboard" })
 
-    expect(within(nav).getByRole("link", { name: "Landing pages" })).toHaveAttribute(
+    expect(within(tabs).getByRole("link", { name: "Landing pages" })).toHaveAttribute(
       "aria-current",
       "page",
     )
-    await userEvent.click(within(nav).getByRole("link", { name: "Assets" }))
+    await userEvent.click(within(tabs).getByRole("link", { name: "Assets" }))
 
-    expect(await screen.findByRole("heading", { level: 1, name: "Assets" })).toBeVisible()
-    expect(within(nav).getByRole("link", { name: "Assets" })).toHaveAttribute(
+    expect(await screen.findByRole("heading", { level: 1, name: "Assets" })).toBeInTheDocument()
+    expect(window.location.search).toBe("?aba=assets")
+    const assetTabs = screen.getByRole("navigation", { name: "Seções do dashboard" })
+    expect(within(assetTabs).getByRole("link", { name: "Assets" })).toHaveAttribute(
       "aria-current",
       "page",
     )
+
+    await userEvent.click(within(assetTabs).getByRole("link", { name: "Landing pages" }))
+
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Landing pages" }),
+    ).toBeInTheDocument()
+    expect(window.location.search).toBe("")
+  })
+
+  it("o cabeçalho não tem mais links de navegação", async () => {
+    signedIn()
+    renderApp("/")
+    await screen.findByRole("navigation", { name: "Seções do dashboard" })
+
+    expect(screen.queryByRole("navigation", { name: "Principal" })).not.toBeInTheDocument()
   })
 })
 
@@ -89,7 +106,7 @@ describe("lista de assets", () => {
     expect(screen.getByRole("link", { name: "Grade" })).toHaveAttribute("aria-current", "page")
     await userEvent.click(screen.getByRole("link", { name: "Lista" }))
 
-    expect(window.location.search).toBe("?visao=lista")
+    expect(window.location.search).toBe("?aba=assets&visao=lista")
     expect(screen.getByRole("link", { name: "Lista" })).toHaveAttribute("aria-current", "page")
     expect(within(assetsList()).getByText("hero.webp")).toBeInTheDocument()
   })
@@ -105,7 +122,7 @@ describe("lista de assets", () => {
     signedIn()
     fakeApi.createAsset(EMAIL, "hero.webp", "image/webp", 18432)
     fakeApi.server.use(http.get(url("/assets"), () => HttpResponse.error(), { once: true }))
-    renderApp("/assets")
+    renderApp("/?aba=assets")
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Sem conexão com a API. Confira sua internet.",
