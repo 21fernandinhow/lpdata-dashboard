@@ -134,12 +134,12 @@ describe("Modo Raw", () => {
     expect(fakeApi.landingPages().find(({ id }) => id === page.id)?.current_data).toEqual(DOCUMENT)
   })
 
-  it("abaixo do editor, um link leva ao contrato na documentação", async () => {
+  it("abaixo do editor, um link leva à seção do JSON na documentação", async () => {
     await openContent()
 
-    const docs = screen.getByRole("link", { name: "Como escrever o Documento de Conteúdo" })
+    const docs = screen.getByRole("link", { name: "Como editar o JSON" })
 
-    expect(docs).toHaveAttribute("href", "https://lpdata.io/landing-pages#documento-de-conteúdo")
+    expect(docs).toHaveAttribute("href", "https://lpdata.io/dashboard#json")
     expect(docs).toHaveAttribute("target", "_blank")
   })
 

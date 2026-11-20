@@ -80,6 +80,15 @@ describe("Modo Formulário", () => {
     expect(screen.getByText(/O documento está vazio/)).toBeInTheDocument()
   })
 
+  it("abaixo do formulário, um link leva à seção do formulário na documentação", async () => {
+    await openForm()
+
+    const docs = screen.getByRole("link", { name: "Como editar pelo formulário" })
+
+    expect(docs).toHaveAttribute("href", "https://lpdata.io/dashboard#formulário")
+    expect(docs).toHaveAttribute("target", "_blank")
+  })
+
   it("altera um valor de cada um dos sete tipos e grava, sem mudar a estrutura", async () => {
     const page = await openForm()
     const hero = section("hero")

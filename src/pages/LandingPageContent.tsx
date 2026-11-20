@@ -31,8 +31,11 @@ const MODE_PARAM = "modo"
 const RAW_MODE = "json"
 const FORM_MODE = "formulario"
 
-// O contrato do documento na documentação: Campos Editáveis, tipos e erros possíveis.
-const CONTRACT_DOCS = "https://lpdata.io/landing-pages#documento-de-conteúdo"
+// A seção da documentação do Dashboard que explica cada modo.
+const MODE_DOCS = {
+  form: { href: "https://lpdata.io/dashboard#formulário", label: "Como editar pelo formulário" },
+  raw: { href: "https://lpdata.io/dashboard#json", label: "Como editar o JSON" },
+}
 
 const SHORTCUT = /Mac|iPhone|iPad/.test(navigator.userAgent) ? "⌘S" : "Ctrl+S"
 
@@ -117,6 +120,7 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
 
   // No Formulário, um documento que não é JSON bloqueia o modo, e o aviso dele já diz o erro.
   const blocked = !onRaw && !source.ok
+  const docs = onRaw ? MODE_DOCS.raw : MODE_DOCS.form
   const shownProblem = blocked && problem?.kind === "syntax" ? null : problem
 
   return (
@@ -235,13 +239,13 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
         />
       )}
 
-      <a className="content__docs" href={CONTRACT_DOCS} target="_blank" rel="noreferrer">
+      <a className="content__docs" href={docs.href} target="_blank" rel="noreferrer">
         <Icon>
           <circle cx="9" cy="9" r="7.25" />
           <path d="M9 12.25V8.5" />
           <path d="M9 5.75H9.01" />
         </Icon>
-        <span>Como escrever o Documento de Conteúdo</span>
+        <span>{docs.label}</span>
       </a>
     </div>
   )
