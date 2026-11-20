@@ -21,7 +21,6 @@ export function Header() {
             width="90"
             height="28"
           />
-          <span className="header__product">Dashboard</span>
         </Link>
         <div className="header__actions">
           <ThemeMenu />
