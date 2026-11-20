@@ -1,5 +1,6 @@
 import type { ComponentType } from "react"
 import { Icon } from "@/components/Icon"
+import { Tooltip } from "@/components/Tooltip"
 import { useThemePreference, type ThemePreference } from "@/theme"
 
 // Cópia do seletor de tema da documentação: os mesmos rótulos, ícones e opções.
@@ -17,15 +18,18 @@ export function ThemeMenu() {
 
   return (
     <div className="theme-menu">
-      <button
-        type="button"
-        className="theme-menu__trigger"
-        popoverTarget={MENU_ID}
-        aria-label="Mudar o tema"
-        title="Mudar o tema"
-      >
-        <CurrentIcon />
-      </button>
+      <Tooltip label="Mudar o tema">
+        {(tooltipId) => (
+          <button
+            type="button"
+            className="theme-menu__trigger"
+            popoverTarget={MENU_ID}
+            aria-labelledby={tooltipId}
+          >
+            <CurrentIcon />
+          </button>
+        )}
+      </Tooltip>
       <div id={MENU_ID} className="theme-menu__list" popover="auto">
         {OPTIONS.map(({ value, label, Icon }) => (
           <button

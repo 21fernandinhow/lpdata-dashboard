@@ -28,3 +28,8 @@
 .theme-menu__check {
   margin-left: auto;
 }
+
+// Com o menu aberto, o tooltip some: os dois ocupariam o mesmo lugar.
+.theme-menu:has(:popover-open) .tooltip__bubble {
+  display: none;
+}
