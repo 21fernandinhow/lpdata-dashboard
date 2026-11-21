@@ -140,6 +140,23 @@ describe("lista de assets", () => {
     expect(within(assetsList()).getByText("hero.webp")).toBeInTheDocument()
   })
 
+  it("lembra a visão escolhida na próxima visita", async () => {
+    signedIn()
+    fakeApi.createAsset(EMAIL, "hero.webp", "image/webp", 18432)
+    const first = renderApp("/?aba=arquivos")
+    await screen.findByRole("heading", { level: 2, name: "Arquivos" })
+    await userEvent.click(screen.getByRole("link", { name: "Lista" }))
+    first.unmount()
+
+    renderApp("/?aba=arquivos")
+    await screen.findByRole("heading", { level: 2, name: "Arquivos" })
+
+    expect(screen.getByRole("link", { name: "Lista" })).toHaveAttribute("aria-current", "page")
+    await userEvent.click(screen.getByRole("link", { name: "Grade" }))
+    expect(window.location.search).toBe("?aba=arquivos&visao=grade")
+    expect(screen.getByRole("link", { name: "Grade" })).toHaveAttribute("aria-current", "page")
+  })
+
   it("sem assets, convida a enviar o primeiro", async () => {
     signedIn()
     await openAssets()

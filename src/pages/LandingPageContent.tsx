@@ -1,5 +1,5 @@
 import { useEffect, useEffectEvent, useId, useMemo, useRef, useState } from "react"
-import { Link, useSearchParams } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { userMessage } from "@/api/errors"
 import { saveDocument, type LandingPage } from "@/api/landing-pages"
 import { DocsLink } from "@/components/DocsLink"
@@ -10,6 +10,7 @@ import { contractErrors, type ContractError } from "@/content/contract-errors"
 import { projectFields, setFieldValue } from "@/content/form-fields"
 import { formatDocument, parseJsonSource, type JsonSourceError } from "@/content/json-source"
 import { ContentForm, type ContentFormHandle } from "@/pages/ContentForm"
+import { useStoredChoice } from "@/preferences"
 import { useApi } from "@/session/context"
 
 type Problem =
@@ -29,7 +30,9 @@ type ContentProps = {
 
 // O modo fica no endereço. Na interface, o Modo Raw se chama JSON.
 const MODE_PARAM = "modo"
+const FORM_MODE = "formulario"
 const RAW_MODE = "json"
+const MODE_STORAGE_KEY = "lpdata-content-mode"
 
 // A seção da documentação do Dashboard que explica cada modo.
 const MODE_DOCS = {
@@ -43,9 +46,10 @@ const SHORTCUT = /Mac|iPhone|iPad/.test(navigator.userAgent) ? "⌘S" : "Ctrl+S"
 // por inteiro (ADR 0005). O cliente só confere se o texto é JSON; o contrato é da API (ADR 0006).
 export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved }: ContentProps) {
   const api = useApi()
-  const [searchParams] = useSearchParams()
-  // Sem modo no endereço, abre no Formulário, que é o modo de quem não lê JSON.
-  const onRaw = searchParams.get(MODE_PARAM) === RAW_MODE
+  // Sem modo no endereço, vale o último escolhido; sem ele, o Formulário, que é o modo de quem
+  // não lê JSON.
+  const onRaw =
+    useStoredChoice(MODE_PARAM, MODE_STORAGE_KEY, [FORM_MODE, RAW_MODE], FORM_MODE) === RAW_MODE
   const editorRef = useRef<JsonEditorHandle>(null)
   const formRef = useRef<ContentFormHandle>(null)
   const problemId = useId()
@@ -125,7 +129,7 @@ export function LandingPageContent({ page, draft, onDraftChange, dirty, onSaved 
       <div className="content__toolbar">
         <nav className="segmented" aria-label="Modo de edição">
           <Link
-            to={{ search: "" }}
+            to={{ search: `?${MODE_PARAM}=${FORM_MODE}` }}
             className="segmented__option"
             aria-current={onRaw ? undefined : "page"}
           >

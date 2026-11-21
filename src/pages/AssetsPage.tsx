@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState, type ChangeEvent } from "react"
-import { Link, useSearchParams } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { userMessage } from "@/api/errors"
 import { deleteAsset, listAssets, uploadAsset, type Asset } from "@/api/assets"
 import { useLoad } from "@/api/use-load"
@@ -11,11 +11,15 @@ import { ASSETS_TAB, HOME_TAB_PARAM, HomeTabs } from "@/components/HomeTabs"
 import { Icon } from "@/components/Icon"
 import { Loader } from "@/components/Loader"
 import { Tooltip } from "@/components/Tooltip"
+import { useStoredChoice } from "@/preferences"
 import { useApi } from "@/session/context"
 
-// A visão fica no endereço. A grade é o padrão: reconhece imagens de relance.
+// A visão fica no endereço e é lembrada no navegador. A grade é o padrão: reconhece imagens de
+// relance.
 const VIEW_PARAM = "visao"
+const GRID_VIEW = "grade"
 const LIST_VIEW = "lista"
+const VIEW_STORAGE_KEY = "lpdata-assets-view"
 
 // O envio em andamento: o nome do arquivo e o progresso, quando o navegador sabe o total.
 type Upload = { name: string; progress: number | null }
@@ -24,8 +28,8 @@ type Upload = { name: string; progress: number | null }
 // arquivo é enviar outro e apagar o anterior (ADR 0002).
 export default function AssetsPage() {
   const api = useApi()
-  const [searchParams] = useSearchParams()
-  const asList = searchParams.get(VIEW_PARAM) === LIST_VIEW
+  const asList =
+    useStoredChoice(VIEW_PARAM, VIEW_STORAGE_KEY, [GRID_VIEW, LIST_VIEW], GRID_VIEW) === LIST_VIEW
   const inputRef = useRef<HTMLInputElement>(null)
   const deleteDialog = useRef<HTMLDialogElement>(null)
   const [upload, setUpload] = useState<Upload | null>(null)
@@ -107,7 +111,7 @@ export default function AssetsPage() {
         />
         <nav className="segmented" aria-label="Visão">
           <Link
-            to={{ search: `?${HOME_TAB_PARAM}=${ASSETS_TAB}` }}
+            to={{ search: `?${HOME_TAB_PARAM}=${ASSETS_TAB}&${VIEW_PARAM}=${GRID_VIEW}` }}
             className="segmented__option"
             aria-current={asList ? undefined : "page"}
           >

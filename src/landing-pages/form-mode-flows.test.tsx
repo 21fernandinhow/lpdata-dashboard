@@ -157,6 +157,19 @@ describe("Modo Formulário", () => {
     expect(screen.getByText("Alterações não salvas")).toBeInTheDocument()
   })
 
+  it("lembra o modo escolhido ao abrir outra vez", async () => {
+    const page = await openForm()
+    await userEvent.click(screen.getByRole("link", { name: "JSON" }))
+    await screen.findByLabelText("Documento de Conteúdo")
+    await userEvent.click(screen.getByRole("link", { name: "Voltar" }))
+    await screen.findByRole("heading", { level: 2, name: "Páginas" })
+
+    await userEvent.click(screen.getByRole("link", { name: "Lançamento" }))
+
+    expect(await screen.findByLabelText("Documento de Conteúdo")).toBeInTheDocument()
+    expect(window.location.pathname).toBe(`/landing-pages/${page.id}`)
+  })
+
   it("JSON inválido no Raw bloqueia o Formulário e mostra o erro", async () => {
     await openForm(DOCUMENT, "?modo=json")
     const editor = await screen.findByLabelText("Documento de Conteúdo")
