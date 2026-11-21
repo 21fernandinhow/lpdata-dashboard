@@ -147,6 +147,26 @@ describe("estrutura pelo Formulário", () => {
     ])
   })
 
+  it("mostra os campos antes das seções, sem mudar a ordem do documento", async () => {
+    const page = await openForm({
+      hero: { banner: { title: field("Oi", "string") }, cta: field("Comprar", "string") },
+      headline: field("Lançamento", "string"),
+    })
+
+    const title = screen.getByLabelText("headline")
+    const hero = section("hero")
+    expect(title.compareDocumentPosition(hero) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const cta = within(hero).getByLabelText("cta")
+    const banner = section("banner", hero)
+    expect(cta.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+
+    await userEvent.type(title, "!")
+    // O documento gravado mantém a ordem escrita: só a exibição muda.
+    const document = await saved(page.id)
+    expect(Object.keys(document)).toEqual(["hero", "headline"])
+    expect(Object.keys(document.hero as object)).toEqual(["banner", "cta"])
+  })
+
   it("documento vazio: o formulário cria a primeira seção", async () => {
     const page = await openForm({})
 

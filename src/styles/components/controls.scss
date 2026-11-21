@@ -77,7 +77,8 @@
   font-size: var(--text-sm);
   font-weight: 500;
 
-  input {
+  input,
+  select {
     height: 2.5rem;
     padding-inline: calc(var(--spacing) * 3);
     border: 1px solid var(--color-border);
@@ -90,5 +91,16 @@
     &:focus-visible {
       outline-offset: 0;
     }
+  }
+
+  // O select nativo com a seta desenhada aqui, na cor do texto: o resto do visual é o do input.
+  select {
+    padding-right: calc(var(--spacing) * 9);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none' stroke='%23596174' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7L9 11L13 7'/%3E%3C/svg%3E");
+    background-position: right calc(var(--spacing) * 3) center;
+    background-repeat: no-repeat;
+    background-size: 1rem;
+    cursor: pointer;
+    appearance: none;
   }
 }

@@ -183,7 +183,7 @@ export function ContentForm({
         {fields.length === 0 ? (
           <p className="content-form__empty">O documento está vazio.</p>
         ) : (
-          <Nodes nodes={fields} depth={0} />
+          <Nodes nodes={fields} depth={0} list={rootIsList} />
         )}
         <GroupActions
           at={[]}
@@ -199,10 +199,21 @@ export function ContentForm({
   )
 }
 
-function Nodes({ nodes, depth }: { nodes: FormNode[]; depth: number }) {
+// Numa seção, os campos vêm antes das subseções, para o que se edita ali ficar no topo. Só a
+// exibição muda: o documento continua na ordem em que foi escrito. Numa lista, a ordem dos itens
+// é conteúdo e fica como está.
+function displayOrder(nodes: FormNode[], list: boolean) {
+  if (list) return nodes
+  return [
+    ...nodes.filter((node) => node.kind !== "group"),
+    ...nodes.filter((node) => node.kind === "group"),
+  ]
+}
+
+function Nodes({ nodes, depth, list }: { nodes: FormNode[]; depth: number; list: boolean }) {
   const { errors, created } = useFormActions()
 
-  return nodes.map((node) => {
+  return displayOrder(nodes, list).map((node) => {
     if (node.kind === "group") {
       const length = node.children.length
       return (
@@ -223,7 +234,7 @@ function Nodes({ nodes, depth }: { nodes: FormNode[]; depth: number }) {
             {length === 0 ? (
               <p className="content-form__empty">Vazio.</p>
             ) : (
-              <Nodes nodes={node.children} depth={depth + 1} />
+              <Nodes nodes={node.children} depth={depth + 1} list={node.list} />
             )}
             <div className="content-form__group-footer">
               <GroupActions
